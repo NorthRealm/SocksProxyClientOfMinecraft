@@ -41,7 +41,9 @@ dependencies {
 	modImplementation("net.fabricmc:fabric-loader:${project.findProperty("fabricloader_version")}")
 
 	modApi("com.terraformersmc:modmenu:${project.findProperty("modmenu_version")}")
-	modApi("dev.isxander:yet-another-config-lib:${project.findProperty("yacl_version")}+${project.findProperty("yacl_fabric")}")
+	modApi("dev.isxander:yet-another-config-lib:${project.findProperty("yacl_version")}+${project.findProperty("yacl_fabric")}") {
+		exclude(group = "net.fabricmc.fabric-api", module = "fabric-api")
+	}
 
 	shadow(implementation("io.netty:netty-handler-proxy:${project.extra["netty_version"]}") {
 		exclude(group = "io.netty", module = "netty-common")
@@ -57,6 +59,8 @@ dependencies {
 	annotationProcessor("org.projectlombok:lombok:${project.extra["lombok_version"]}")
 	compileOnly("org.projectlombok:lombok:${project.extra["lombok_version"]}")
 
+	// https://github.com/FabricMC/fabric-loader/issues/966
+	modLocalRuntime("net.fabricmc.fabric-api:fabric-api:0.110.0+1.21.3")
 	testImplementation("net.fabricmc:fabric-loader-junit:${project.findProperty("fabricloader_version")}")
 }
 
