@@ -1,8 +1,0 @@
-ext {
-    netty_version = "4.1.97.Final"
-    dnsjava_version = "3.5.2"
-    lombok_version = "1.18.30"
-    compilation_java_version = project.targetCompatibility
-    git_hash = "local"
-    git_short_hash = "local"
-}
