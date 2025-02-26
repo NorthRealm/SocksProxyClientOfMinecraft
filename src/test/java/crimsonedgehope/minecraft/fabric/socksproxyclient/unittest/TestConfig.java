@@ -4,16 +4,18 @@ import crimsonedgehope.minecraft.fabric.socksproxyclient.config.ConfigUtils;
 import crimsonedgehope.minecraft.fabric.socksproxyclient.config.GeneralConfig;
 import crimsonedgehope.minecraft.fabric.socksproxyclient.config.MiscellaneousConfig;
 import crimsonedgehope.minecraft.fabric.socksproxyclient.config.ServerConfig;
+import crimsonedgehope.minecraft.fabric.socksproxyclient.config.entry.ProxyEntry;
 import crimsonedgehope.minecraft.fabric.socksproxyclient.config.entry.SocksProxyClientConfigEntry;
 import crimsonedgehope.minecraft.fabric.socksproxyclient.proxy.doh.DOHProvider;
+import crimsonedgehope.minecraft.fabric.socksproxyclient.proxy.socks.SocksVersion;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
 
 class TestConfig {
 
@@ -26,7 +28,15 @@ class TestConfig {
     ServerConfig serverConfig;
     MiscellaneousConfig miscellaneousConfig;
 
-    private void getObjects() {
+    final Runnable deleteFiles = () -> {
+        Assertions.assertDoesNotThrow(() -> {
+            generalConfig.getConfigFile().delete();
+            serverConfig.getConfigFile().delete();
+            miscellaneousConfig.getConfigFile().delete();
+        });
+    };
+
+    final Runnable getObjects = () -> {
         Assertions.assertDoesNotThrow(() -> {
             generalConfig = ConfigUtils.getConfigInstance(GeneralConfig.class);
             serverConfig = ConfigUtils.getConfigInstance(ServerConfig.class);
@@ -36,109 +46,165 @@ class TestConfig {
         Assertions.assertNotNull(generalConfig.getConfigFile());
         Assertions.assertNotNull(serverConfig.getConfigFile());
         Assertions.assertNotNull(miscellaneousConfig.getConfigFile());
-    }
-    
-    <T> void setEntry(SocksProxyClientConfigEntry<T> entry, T value) {
-        entry.setValue(value);
-    }
-    
-    <T> void compareEntry(SocksProxyClientConfigEntry<T> entry, T expected) {
-        Assertions.assertEquals(expected, entry.getValue());
+    };
+
+    final Runnable load = () -> {
+        Assertions.assertDoesNotThrow(ConfigUtils::loadAllConfig);
+    };
+
+    final Runnable save = () -> {
+        Assertions.assertDoesNotThrow(ConfigUtils::saveAllConfig);
+    };
+
+    final Runnable reload = () -> {
+        save.run();
+        load.run();
+    };
+
+    @FunctionalInterface
+    interface ActionOnEntry {
+        <T> void apply(SocksProxyClientConfigEntry<T> entry, T value);
     }
 
-    <T> void compare(Predicate<T> predicate, T expected) {
-        Assertions.assertTrue(predicate.test(expected));
+    ActionOnEntry setEntry = SocksProxyClientConfigEntry::setValue;
+
+    ActionOnEntry compareValue = new ActionOnEntry() {
+        @Override
+        public <T> void apply(SocksProxyClientConfigEntry<T> entry, T expected) {
+            Assertions.assertEquals(expected, entry.getValue());
+        }
+    };
+
+    @Test
+    @DisplayName("Test config file loading and writing")
+    void testConfigInitialization() {
+        load.run();
+        getObjects.run();
+        deleteFiles.run();
+        reload.run();
     }
 
     @Test
-    @DisplayName("Test config saving")
-    void testConfigSave() {
-        Assertions.assertDoesNotThrow(ConfigUtils::loadAllConfig);
-        getObjects();
-
-        generalConfig.getConfigFile().delete();
-        serverConfig.getConfigFile().delete();
-        miscellaneousConfig.getConfigFile().delete();
-
-        Assertions.assertDoesNotThrow(ConfigUtils::saveAllConfig);
-        Assertions.assertDoesNotThrow(ConfigUtils::loadAllConfig);
-        getObjects();
-
+    @DisplayName("Test general config manipulation")
+    void testGeneralConfig() {
+        reload.run();
+        getObjects.run();
         Assertions.assertDoesNotThrow(() -> {
             SocksProxyClientConfigEntry<Boolean> useProxy = generalConfig.getEntryField("useProxy", Boolean.class);
-            setEntry(useProxy, !useProxy.getDefaultValue());
-            
-            SocksProxyClientConfigEntry<Boolean> buttonsInMultiplayerScreen = miscellaneousConfig.getEntryField("buttonsInMultiplayerScreen", Boolean.class);
-            SocksProxyClientConfigEntry<Boolean> checkUpdates = miscellaneousConfig.getEntryField("checkUpdates", Boolean.class);
-            setEntry(buttonsInMultiplayerScreen, !buttonsInMultiplayerScreen.getDefaultValue());
-            setEntry(checkUpdates, !checkUpdates.getDefaultValue());
+            setEntry.apply(useProxy, !useProxy.getDefaultValue());
 
-            SocksProxyClientConfigEntry<Boolean> proxyMinecraft = serverConfig.getEntryField("proxyMinecraft", Boolean.class);
-            SocksProxyClientConfigEntry<Boolean> minecraftDomainNameResolutionUseProxy = serverConfig.getEntryField("minecraftDomainNameResolutionUseProxy", Boolean.class);
-            SocksProxyClientConfigEntry<Boolean> minecraftDomainNameResolutionDismissSystemHosts = serverConfig.getEntryField("minecraftDomainNameResolutionDismissSystemHosts", Boolean.class);
-            SocksProxyClientConfigEntry<String> minecraftDomainNameResolutionDohProviderUrl = serverConfig.getEntryField("minecraftDomainNameResolutionDohProviderUrl", String.class);
-            SocksProxyClientConfigEntry<Boolean> proxyYggdrasil = serverConfig.getEntryField("proxyYggdrasil", Boolean.class);
-            SocksProxyClientConfigEntry<Boolean> proxyPlayerSkinDownload = serverConfig.getEntryField("proxyPlayerSkinDownload", Boolean.class);
-            SocksProxyClientConfigEntry<Boolean> proxyServerResourceDownload = serverConfig.getEntryField("proxyServerResourceDownload", Boolean.class);
-            SocksProxyClientConfigEntry<Boolean> proxyBlockListSupplier = serverConfig.getEntryField("proxyBlockListSupplier", Boolean.class);
-            SocksProxyClientConfigEntry<Boolean> httpRemoteResolve = serverConfig.getEntryField("httpRemoteResolve", Boolean.class);
-            SocksProxyClientConfigEntry<Boolean> imposeProxyOnMinecraftLoopback = serverConfig.getEntryField("imposeProxyOnMinecraftLoopback", Boolean.class);
-            setEntry(proxyMinecraft, !proxyMinecraft.getDefaultValue());
-            setEntry(minecraftDomainNameResolutionUseProxy, !minecraftDomainNameResolutionUseProxy.getDefaultValue());
-            setEntry(minecraftDomainNameResolutionDismissSystemHosts, !minecraftDomainNameResolutionDismissSystemHosts.getDefaultValue());
-            setEntry(minecraftDomainNameResolutionDohProviderUrl, "https://example.org/dns-query");
-            setEntry(proxyYggdrasil, !proxyYggdrasil.getDefaultValue());
-            setEntry(proxyPlayerSkinDownload, !proxyPlayerSkinDownload.getDefaultValue());
-            setEntry(proxyServerResourceDownload, !proxyServerResourceDownload.getDefaultValue());
-            setEntry(proxyBlockListSupplier, !proxyBlockListSupplier.getDefaultValue());
-            setEntry(httpRemoteResolve, !httpRemoteResolve.getDefaultValue());
-            setEntry(imposeProxyOnMinecraftLoopback, !imposeProxyOnMinecraftLoopback.getDefaultValue());
-
-            SocksProxyClientConfigEntry<DOHProvider> minecraftDomainNameResolutionDohProvider = serverConfig.getEntryField("minecraftDomainNameResolutionDohProvider", DOHProvider.class);
-            setEntry(minecraftDomainNameResolutionDohProvider, DOHProvider.CUSTOM);
             SocksProxyClientConfigEntry<List> proxies = generalConfig.getEntryField("proxies", List.class);
-            setEntry(proxies, new ArrayList<String>());
+            setEntry.apply(proxies, new ArrayList<String>());
         });
 
-        Assertions.assertDoesNotThrow(ConfigUtils::saveAllConfig);
-        Assertions.assertDoesNotThrow(ConfigUtils::loadAllConfig);
-        getObjects();
-        
+        reload.run();
+        getObjects.run();
         Assertions.assertDoesNotThrow(() -> {
             SocksProxyClientConfigEntry<Boolean> useProxy = generalConfig.getEntryField("useProxy", Boolean.class);
-            compareEntry(useProxy, !useProxy.getDefaultValue());
-
-            SocksProxyClientConfigEntry<Boolean> buttonsInMultiplayerScreen = miscellaneousConfig.getEntryField("buttonsInMultiplayerScreen", Boolean.class);
-            SocksProxyClientConfigEntry<Boolean> checkUpdates = miscellaneousConfig.getEntryField("checkUpdates", Boolean.class);
-            compareEntry(buttonsInMultiplayerScreen, !buttonsInMultiplayerScreen.getDefaultValue());
-            compareEntry(checkUpdates, !checkUpdates.getDefaultValue());
-
-            SocksProxyClientConfigEntry<Boolean> proxyMinecraft = serverConfig.getEntryField("proxyMinecraft", Boolean.class);
-            SocksProxyClientConfigEntry<Boolean> minecraftDomainNameResolutionUseProxy = serverConfig.getEntryField("minecraftDomainNameResolutionUseProxy", Boolean.class);
-            SocksProxyClientConfigEntry<Boolean> minecraftDomainNameResolutionDismissSystemHosts = serverConfig.getEntryField("minecraftDomainNameResolutionDismissSystemHosts", Boolean.class);
-            SocksProxyClientConfigEntry<String> minecraftDomainNameResolutionDohProviderUrl = serverConfig.getEntryField("minecraftDomainNameResolutionDohProviderUrl", String.class);
-            SocksProxyClientConfigEntry<Boolean> proxyYggdrasil = serverConfig.getEntryField("proxyYggdrasil", Boolean.class);
-            SocksProxyClientConfigEntry<Boolean> proxyPlayerSkinDownload = serverConfig.getEntryField("proxyPlayerSkinDownload", Boolean.class);
-            SocksProxyClientConfigEntry<Boolean> proxyServerResourceDownload = serverConfig.getEntryField("proxyServerResourceDownload", Boolean.class);
-            SocksProxyClientConfigEntry<Boolean> proxyBlockListSupplier = serverConfig.getEntryField("proxyBlockListSupplier", Boolean.class);
-            SocksProxyClientConfigEntry<Boolean> httpRemoteResolve = serverConfig.getEntryField("httpRemoteResolve", Boolean.class);
-            SocksProxyClientConfigEntry<Boolean> imposeProxyOnMinecraftLoopback = serverConfig.getEntryField("imposeProxyOnMinecraftLoopback", Boolean.class);
-            compareEntry(proxyMinecraft, !proxyMinecraft.getDefaultValue());
-            compareEntry(minecraftDomainNameResolutionUseProxy, !minecraftDomainNameResolutionUseProxy.getDefaultValue());
-            compareEntry(minecraftDomainNameResolutionDismissSystemHosts, !minecraftDomainNameResolutionDismissSystemHosts.getDefaultValue());
-            compareEntry(minecraftDomainNameResolutionDohProviderUrl, "https://example.org/dns-query");
-            compareEntry(proxyYggdrasil, !proxyYggdrasil.getDefaultValue());
-            compareEntry(proxyPlayerSkinDownload, !proxyPlayerSkinDownload.getDefaultValue());
-            compareEntry(proxyServerResourceDownload, !proxyServerResourceDownload.getDefaultValue());
-            compareEntry(proxyBlockListSupplier, !proxyBlockListSupplier.getDefaultValue());
-            compareEntry(httpRemoteResolve, !httpRemoteResolve.getDefaultValue());
-            compareEntry(imposeProxyOnMinecraftLoopback, !imposeProxyOnMinecraftLoopback.getDefaultValue());
-
-            SocksProxyClientConfigEntry<DOHProvider> minecraftDomainNameResolutionDohProvider = serverConfig.getEntryField("minecraftDomainNameResolutionDohProvider", DOHProvider.class);
-            compareEntry(minecraftDomainNameResolutionDohProvider, DOHProvider.CUSTOM);
+            compareValue.apply(useProxy, !useProxy.getDefaultValue());
 
             SocksProxyClientConfigEntry<List> proxies = generalConfig.getEntryField("proxies", List.class);
-            compare(List::isEmpty, proxies.getValue());
+            Assertions.assertTrue(proxies.getValue().isEmpty());
         });
+
+        final List<ProxyEntry> fakeProxies = new ArrayList<>() {{
+            add(new ProxyEntry(SocksVersion.SOCKS5, new InetSocketAddress("localhost", 1081)));
+            add(new ProxyEntry(SocksVersion.SOCKS4, new InetSocketAddress("10.0.0.1", 1082)));
+            add(new ProxyEntry(SocksVersion.SOCKS4, new InetSocketAddress("172.16.0.1", 1083)));
+            add(new ProxyEntry(SocksVersion.SOCKS5, new InetSocketAddress("192.168.0.1", 1084), "admin", "123456"));
+        }};
+
+        reload.run();
+        getObjects.run();
+        Assertions.assertDoesNotThrow(() -> {
+            SocksProxyClientConfigEntry<List> proxies = generalConfig.getEntryField("proxies", List.class);
+            setEntry.apply(proxies, fakeProxies);
+        });
+
+        reload.run();
+        getObjects.run();
+        Assertions.assertDoesNotThrow(() -> {
+            SocksProxyClientConfigEntry<List> proxies = generalConfig.getEntryField("proxies", List.class);
+            Assertions.assertFalse(proxies.getValue().isEmpty());
+
+            Assertions.assertEquals(SocksVersion.SOCKS5, ((ProxyEntry) proxies.getValue().get(0)).getVersion());
+            Assertions.assertEquals(SocksVersion.SOCKS4, ((ProxyEntry) proxies.getValue().get(1)).getVersion());
+            Assertions.assertEquals(SocksVersion.SOCKS4, ((ProxyEntry) proxies.getValue().get(2)).getVersion());
+            Assertions.assertEquals(SocksVersion.SOCKS5, ((ProxyEntry) proxies.getValue().get(3)).getVersion());
+
+            Assertions.assertEquals("localhost", ((InetSocketAddress) ((ProxyEntry) proxies.getValue().get(0)).getProxy().address()).getHostString());
+            Assertions.assertEquals(1081, ((InetSocketAddress) ((ProxyEntry) proxies.getValue().get(0)).getProxy().address()).getPort());
+
+            Assertions.assertEquals("10.0.0.1", ((InetSocketAddress) ((ProxyEntry) proxies.getValue().get(1)).getProxy().address()).getHostString());
+            Assertions.assertEquals(1082, ((InetSocketAddress) ((ProxyEntry) proxies.getValue().get(1)).getProxy().address()).getPort());
+
+            Assertions.assertEquals("172.16.0.1", ((InetSocketAddress) ((ProxyEntry) proxies.getValue().get(2)).getProxy().address()).getHostString());
+            Assertions.assertEquals(1083, ((InetSocketAddress) ((ProxyEntry) proxies.getValue().get(2)).getProxy().address()).getPort());
+
+            Assertions.assertEquals("192.168.0.1", ((InetSocketAddress) ((ProxyEntry) proxies.getValue().get(3)).getProxy().address()).getHostString());
+            Assertions.assertEquals(1084, ((InetSocketAddress) ((ProxyEntry) proxies.getValue().get(3)).getProxy().address()).getPort());
+            Assertions.assertEquals("admin", ((ProxyEntry) proxies.getValue().get(3)).getSocksProxyCredential().getUsername());
+            Assertions.assertEquals("123456", ((ProxyEntry) proxies.getValue().get(3)).getSocksProxyCredential().getPassword());
+        });
+    }
+
+    @Test
+    @DisplayName("Test miscellaneous config manipulation")
+    void testMiscellaneousConfig() {
+        for (ActionOnEntry action : new ActionOnEntry[] {setEntry, compareValue}) {
+            reload.run();
+            getObjects.run();
+            Assertions.assertDoesNotThrow(() -> {
+                SocksProxyClientConfigEntry<Boolean> buttonsInMultiplayerScreen = miscellaneousConfig.getEntryField("buttonsInMultiplayerScreen", Boolean.class);
+                action.apply(buttonsInMultiplayerScreen, !buttonsInMultiplayerScreen.getDefaultValue());
+
+                SocksProxyClientConfigEntry<Boolean> checkUpdates = miscellaneousConfig.getEntryField("checkUpdates", Boolean.class);
+                action.apply(checkUpdates, !checkUpdates.getDefaultValue());
+            });
+        }
+    }
+
+    @Test
+    @DisplayName("Test server config manipulation")
+    void testServerConfig() {
+        for (ActionOnEntry action : new ActionOnEntry[] {setEntry, compareValue}) {
+            Assertions.assertDoesNotThrow(() -> {
+                reload.run();
+                getObjects.run();
+
+                SocksProxyClientConfigEntry<Boolean> proxyMinecraft = serverConfig.getEntryField("proxyMinecraft", Boolean.class);
+                action.apply(proxyMinecraft, !proxyMinecraft.getDefaultValue());
+
+                SocksProxyClientConfigEntry<Boolean> minecraftDomainNameResolutionUseProxy = serverConfig.getEntryField("minecraftDomainNameResolutionUseProxy", Boolean.class);
+                action.apply(minecraftDomainNameResolutionUseProxy, !minecraftDomainNameResolutionUseProxy.getDefaultValue());
+
+                SocksProxyClientConfigEntry<Boolean> minecraftDomainNameResolutionDismissSystemHosts = serverConfig.getEntryField("minecraftDomainNameResolutionDismissSystemHosts", Boolean.class);
+                action.apply(minecraftDomainNameResolutionDismissSystemHosts, !minecraftDomainNameResolutionDismissSystemHosts.getDefaultValue());
+
+                SocksProxyClientConfigEntry<String> minecraftDomainNameResolutionDohProviderUrl = serverConfig.getEntryField("minecraftDomainNameResolutionDohProviderUrl", String.class);
+                action.apply(minecraftDomainNameResolutionDohProviderUrl, "https://example.org/dns-query");
+
+                SocksProxyClientConfigEntry<Boolean> proxyYggdrasil = serverConfig.getEntryField("proxyYggdrasil", Boolean.class);
+                action.apply(proxyYggdrasil, !proxyYggdrasil.getDefaultValue());
+
+                SocksProxyClientConfigEntry<Boolean> proxyPlayerSkinDownload = serverConfig.getEntryField("proxyPlayerSkinDownload", Boolean.class);
+                action.apply(proxyPlayerSkinDownload, !proxyPlayerSkinDownload.getDefaultValue());
+
+                SocksProxyClientConfigEntry<Boolean> proxyServerResourceDownload = serverConfig.getEntryField("proxyServerResourceDownload", Boolean.class);
+                action.apply(proxyServerResourceDownload, !proxyServerResourceDownload.getDefaultValue());
+
+                SocksProxyClientConfigEntry<Boolean> proxyBlockListSupplier = serverConfig.getEntryField("proxyBlockListSupplier", Boolean.class);
+                action.apply(proxyBlockListSupplier, !proxyBlockListSupplier.getDefaultValue());
+
+                SocksProxyClientConfigEntry<Boolean> httpRemoteResolve = serverConfig.getEntryField("httpRemoteResolve", Boolean.class);
+                action.apply(httpRemoteResolve, !httpRemoteResolve.getDefaultValue());
+
+                SocksProxyClientConfigEntry<Boolean> imposeProxyOnMinecraftLoopback = serverConfig.getEntryField("imposeProxyOnMinecraftLoopback", Boolean.class);
+                action.apply(imposeProxyOnMinecraftLoopback, !imposeProxyOnMinecraftLoopback.getDefaultValue());
+
+                SocksProxyClientConfigEntry<DOHProvider> minecraftDomainNameResolutionDohProvider = serverConfig.getEntryField("minecraftDomainNameResolutionDohProvider", DOHProvider.class);
+                action.apply(minecraftDomainNameResolutionDohProvider, DOHProvider.CUSTOM);
+            });
+        }
     }
 }
