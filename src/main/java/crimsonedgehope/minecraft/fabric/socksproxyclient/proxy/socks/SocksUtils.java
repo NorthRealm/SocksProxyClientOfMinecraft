@@ -57,7 +57,7 @@ public final class SocksUtils {
 
     private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(10);
     private static final MultiplayerServerListPinger pinger = new MultiplayerServerListPinger();
-    private static Long testTime = System.currentTimeMillis();
+    private static Long testTime = 0L;
 
     static {
         scheduler.scheduleAtFixedRate(pinger::tick, 0, 50L, TimeUnit.MILLISECONDS);
@@ -98,7 +98,7 @@ public final class SocksUtils {
             ServerInfo entry = new ServerInfo(target, target, ServerInfo.ServerType.OTHER);
             pinger.add(entry, () -> {}, () -> {
                 showTestResult(new Pair<>(true, null), target);
-                SocksProxyClientConfig.LOGGER.info("Pinged {}. Ping {}ms - Version: {} - Protocol version: {} - Player count: {}",
+                SocksProxyClientConfig.LOGGER.info("Pinged {}: Ping {}ms\n Version: {}\n Protocol version: {}\n Player count: {}",
                         target, entry.ping, entry.version.getLiteralString(), entry.protocolVersion, entry.playerCountLabel.getString());
             });
         } catch (Exception e) {
@@ -151,24 +151,27 @@ public final class SocksUtils {
     }
 
     private static void showTestStart(final String target) {
-        scheduler.submit((() -> {
-            SocksProxyClientConfig.LOGGER.info("Testing connection to {}", target);
-            MinecraftClient.getInstance().getToastManager().add(
-                    new SystemToast(new SystemToast.Type(1000L),
+        SocksProxyClientConfig.LOGGER.info("Testing connection to {}", target);
+        MinecraftClient.getInstance().submit(() -> {
+            SystemToast.show(
+                    MinecraftClient.getInstance().getToastManager(),
+                    new SystemToast.Type(1000L),
                     Text.translatable(TranslateKeys.SOCKSPROXYCLIENT_CONFIG_GENERAL_PROXY_TESTING),
-                    Text.literal(target)));
-        }));
+                    Text.literal(target));
+        });
     }
 
     private static void showTestResult(Pair<Boolean, Throwable> res, final String target) {
-        scheduler.submit((() -> {
-            MinecraftClient.getInstance().getToastManager().add(
-                    new SystemToast(new SystemToast.Type(),
-                            Text.translatable(res.getLeft()
-                                    ? TranslateKeys.SOCKSPROXYCLIENT_CONFIG_GENERAL_PROXY_TEST_SUCCESS
-                                    : TranslateKeys.SOCKSPROXYCLIENT_CONFIG_GENERAL_PROXY_TEST_FAILURE
-                            ), Text.literal(target)));
-        }));
+        MinecraftClient.getInstance().submit(() -> {
+            SystemToast.add(
+                    MinecraftClient.getInstance().getToastManager(),
+                    new SystemToast.Type(),
+                    Text.translatable(res.getLeft()
+                            ? TranslateKeys.SOCKSPROXYCLIENT_CONFIG_GENERAL_PROXY_TEST_SUCCESS
+                            : TranslateKeys.SOCKSPROXYCLIENT_CONFIG_GENERAL_PROXY_TEST_FAILURE
+                    ),
+                    Text.literal(target));
+        });
 
         if (res.getLeft()) {
             return;
