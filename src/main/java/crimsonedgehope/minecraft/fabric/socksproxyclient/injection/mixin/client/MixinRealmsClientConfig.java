@@ -1,5 +1,6 @@
 package crimsonedgehope.minecraft.fabric.socksproxyclient.injection.mixin.client;
 
+import crimsonedgehope.minecraft.fabric.socksproxyclient.config.ServerConfig;
 import crimsonedgehope.minecraft.fabric.socksproxyclient.proxy.http.HttpProxyUtils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -20,6 +21,6 @@ public class MixinRealmsClientConfig {
                     opcode = Opcodes.GETSTATIC)
     )
     private static Proxy redirected() {
-        return HttpProxyUtils.getProxyObject(true);
+        return HttpProxyUtils.getProxyObject(ServerConfig.shouldProxyRealmsApi());
     }
 }

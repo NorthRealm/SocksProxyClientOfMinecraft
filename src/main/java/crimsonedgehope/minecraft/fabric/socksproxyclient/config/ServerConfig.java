@@ -48,6 +48,11 @@ public final class ServerConfig extends SocksProxyClientConfig {
                     Text.translatable(TranslateKeys.SOCKSPROXYCLIENT_CONFIG_SERVER_SERVICES_PROXYYGGDRASIL),
                     Text.translatable(TranslateKeys.SOCKSPROXYCLIENT_CONFIG_SERVER_SERVICES_PROXYYGGDRASIL_TOOLTIP),
                     true);
+    private static final SocksProxyClientConfigEntry<Boolean> proxyRealmsApi =
+            new SocksProxyClientConfigEntry<>(INSTANCE.getClass(), "proxyRealmsApi",
+                    Text.translatable(TranslateKeys.SOCKSPROXYCLIENT_CONFIG_SERVER_SERVICES_PROXYREALMSAPI),
+                    Text.translatable(TranslateKeys.SOCKSPROXYCLIENT_CONFIG_SERVER_SERVICES_PROXYREALMSAPI_TOOLTIP),
+                    true);
     private static final SocksProxyClientConfigEntry<Boolean> proxyPlayerSkinDownload =
             new SocksProxyClientConfigEntry<>(INSTANCE.getClass(), "proxyPlayerSkinDownload",
                     Text.translatable(TranslateKeys.SOCKSPROXYCLIENT_CONFIG_SERVER_SERVICES_PROXYPLAYERSKINDOWNLOAD),
@@ -104,6 +109,10 @@ public final class ServerConfig extends SocksProxyClientConfig {
         return GeneralConfig.usingProxy() && proxyYggdrasil.getValue();
     }
 
+    public static boolean shouldProxyRealmsApi() {
+        return GeneralConfig.usingProxy() && proxyRealmsApi.getValue();
+    }
+
     public static boolean shouldProxyPlayerSkinDownload() {
         return GeneralConfig.usingProxy() && proxyPlayerSkinDownload.getValue();
     }
@@ -147,6 +156,7 @@ public final class ServerConfig extends SocksProxyClientConfig {
         obj.addProperty(minecraftDomainNameResolutionDohProvider.getJsonEntry(), minecraftDomainNameResolutionDohProvider.getDefaultValue().name());
         obj.addProperty(minecraftDomainNameResolutionDohProviderUrl.getJsonEntry(), minecraftDomainNameResolutionDohProviderUrl.getDefaultValue());
         obj.addProperty(proxyYggdrasil.getJsonEntry(), proxyYggdrasil.getDefaultValue());
+        obj.addProperty(proxyRealmsApi.getJsonEntry(), proxyRealmsApi.getDefaultValue());
         obj.addProperty(proxyPlayerSkinDownload.getJsonEntry(), proxyPlayerSkinDownload.getDefaultValue());
         obj.addProperty(proxyServerResourceDownload.getJsonEntry(), proxyServerResourceDownload.getDefaultValue());
         obj.addProperty(proxyBlockListSupplier.getJsonEntry(), proxyBlockListSupplier.getDefaultValue());
@@ -164,6 +174,7 @@ public final class ServerConfig extends SocksProxyClientConfig {
         obj.addProperty(minecraftDomainNameResolutionDohProvider.getJsonEntry(), minecraftDomainNameResolutionDohProvider.getValue().name());
         obj.addProperty(minecraftDomainNameResolutionDohProviderUrl.getJsonEntry(), minecraftDomainNameResolutionDohProviderUrl.getValue());
         obj.addProperty(proxyYggdrasil.getJsonEntry(), proxyYggdrasil.getValue());
+        obj.addProperty(proxyRealmsApi.getJsonEntry(), proxyRealmsApi.getValue());
         obj.addProperty(proxyPlayerSkinDownload.getJsonEntry(), proxyPlayerSkinDownload.getValue());
         obj.addProperty(proxyServerResourceDownload.getJsonEntry(), proxyServerResourceDownload.getValue());
         obj.addProperty(proxyBlockListSupplier.getJsonEntry(), proxyBlockListSupplier.getValue());
@@ -180,6 +191,7 @@ public final class ServerConfig extends SocksProxyClientConfig {
         minecraftDomainNameResolutionDohProvider.setValue(DOHProvider.valueOf(object.get(minecraftDomainNameResolutionDohProvider.getJsonEntry()).getAsString()));
         minecraftDomainNameResolutionDohProviderUrl.setValue(object.get(minecraftDomainNameResolutionDohProviderUrl.getJsonEntry()).getAsString());
         proxyYggdrasil.setValue(object.get(proxyYggdrasil.getJsonEntry()).getAsBoolean());
+        proxyRealmsApi.setValue(object.get(proxyRealmsApi.getJsonEntry()).getAsBoolean());
         proxyPlayerSkinDownload.setValue(object.get(proxyPlayerSkinDownload.getJsonEntry()).getAsBoolean());
         proxyServerResourceDownload.setValue(object.get(proxyServerResourceDownload.getJsonEntry()).getAsBoolean());
         proxyBlockListSupplier.setValue(object.get(proxyBlockListSupplier.getJsonEntry()).getAsBoolean());

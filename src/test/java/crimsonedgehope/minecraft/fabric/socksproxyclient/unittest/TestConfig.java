@@ -187,6 +187,9 @@ class TestConfig {
                 SocksProxyClientConfigEntry<Boolean> proxyYggdrasil = serverConfig.getEntryField("proxyYggdrasil", Boolean.class);
                 action.apply(proxyYggdrasil, !proxyYggdrasil.getDefaultValue());
 
+                SocksProxyClientConfigEntry<Boolean> proxyRealmsApi = serverConfig.getEntryField("proxyRealmsApi", Boolean.class);
+                action.apply(proxyRealmsApi, !proxyRealmsApi.getDefaultValue());
+
                 SocksProxyClientConfigEntry<Boolean> proxyPlayerSkinDownload = serverConfig.getEntryField("proxyPlayerSkinDownload", Boolean.class);
                 action.apply(proxyPlayerSkinDownload, !proxyPlayerSkinDownload.getDefaultValue());
 
