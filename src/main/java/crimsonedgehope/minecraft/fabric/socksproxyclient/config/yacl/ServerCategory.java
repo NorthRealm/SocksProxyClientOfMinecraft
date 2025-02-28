@@ -22,6 +22,7 @@ final class ServerCategory extends YACLCategory<ServerConfig> {
     SocksProxyClientConfigEntry<String> minecraftDomainNameResolutionDohProviderUrl;
 
     SocksProxyClientConfigEntry<Boolean> proxyYggdrasil;
+    SocksProxyClientConfigEntry<Boolean> proxyRealmsApi;
     SocksProxyClientConfigEntry<Boolean> proxyPlayerSkinDownload;
     SocksProxyClientConfigEntry<Boolean> proxyServerResourceDownload;
     SocksProxyClientConfigEntry<Boolean> proxyBlockListSupplier;
@@ -110,6 +111,13 @@ final class ServerCategory extends YACLCategory<ServerConfig> {
                 .binding(proxyYggdrasil.getDefaultValue(), proxyYggdrasil::getValue, proxyYggdrasil::setValue)
                 .controller(opt -> BooleanControllerBuilder.create(opt).yesNoFormatter().coloured(true))
                 .build();
+        proxyRealmsApi = entryField("proxyRealmsApi", Boolean.class);
+        Option<Boolean> yaclProxyRealmsApi = Option.<Boolean>createBuilder()
+                .name(proxyRealmsApi.getEntryTranslateKey())
+                .description(OptionDescription.of(proxyRealmsApi.getDescriptionTranslateKey()))
+                .binding(proxyRealmsApi.getDefaultValue(), proxyRealmsApi::getValue, proxyRealmsApi::setValue)
+                .controller(opt -> BooleanControllerBuilder.create(opt).yesNoFormatter().coloured(true))
+                .build();
         proxyPlayerSkinDownload = entryField("proxyPlayerSkinDownload", Boolean.class);
         Option<Boolean> yaclProxyPlayerSkinDownload = Option.<Boolean>createBuilder()
                 .name(proxyPlayerSkinDownload.getEntryTranslateKey())
@@ -140,6 +148,7 @@ final class ServerCategory extends YACLCategory<ServerConfig> {
                 .build();
 
         groupServices.option(yaclProxyYggdrasil)
+                .option(yaclProxyRealmsApi)
                 .option(yaclProxyPlayerSkinDownload)
                 .option(yaclProxyServerResourceDownload)
                 .option(yaclProxyBlockListSupplier)

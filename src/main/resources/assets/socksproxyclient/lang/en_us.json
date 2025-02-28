@@ -34,6 +34,8 @@
   "socksproxyclient.config.server.services": "Services",
   "socksproxyclient.config.server.services.proxyYggdrasil": "Proxy Yggdrasil service communication",
   "socksproxyclient.config.server.services.proxyYggdrasil.tooltip": "Minecraft client communicates with Mojang's Yggdrasil API service to verify your character, especially upon joining an online server. It uses HTTP protocol to exchange information.",
+  "socksproxyclient.config.server.services.proxyRealmsApi": "Proxy Realms API communication",
+  "socksproxyclient.config.server.services.proxyRealmsApi.tooltip": "Minecraft client communicates with Realms API for Realms service. It uses HTTP protocol to exchange information.",
   "socksproxyclient.config.server.services.proxyPlayerSkinDownload": "Proxy player skin downloading",
   "socksproxyclient.config.server.services.proxyPlayerSkinDownload.tooltip": "Minecraft client may download necessary skin images to render them in game. It uses HTTP protocol to exchange information.",
   "socksproxyclient.config.server.services.proxyServerResourceDownload": "Proxy Minecraft server resource pack downloading",
