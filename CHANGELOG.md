@@ -14,6 +14,19 @@
 
 ### Security
 
+## [11.1.0-alpha+1.21.4]
+
+### Added
+
+- New config option for proxying communication with Minecraft Realms API.
+- New translate keys.
+
+### Changed
+
+- Proxy testing will ping Minecraft servers.
+- Mod metadata.
+- Refactored mod update checker.
+
 ## [11.0.0-alpha+1.21.4]
 
 ### Changed
@@ -128,7 +141,8 @@
 - Convert SOCKS proxy to HTTP(S) proxy. Proxy communications with Mojang Yggdrasil auth service, player skin download endpoint, and server resource pack downloading.
 - Remotely resolve Minecraft server's domain name through SOCKS proxy with the help of [DNS over HTTPS (DoH)](https://www.rfc-editor.org/rfc/rfc8484)
 
-[Unreleased]: https://github.com/NorthRealm/SocksProxyClientOfMinecraft/compare/v11.0.0-alpha+1.21.4...HEAD
+[Unreleased]: https://github.com/NorthRealm/SocksProxyClientOfMinecraft/compare/v11.1.0-alpha+1.21.4...HEAD
+[11.1.0-alpha+1.21.4]: https://github.com/NorthRealm/SocksProxyClientOfMinecraft/compare/v11.0.0-alpha+1.21.4...v11.1.0-alpha+1.21.4
 [11.0.0-alpha+1.21.4]: https://github.com/NorthRealm/SocksProxyClientOfMinecraft/compare/v10.1.1-alpha+1.21.3...v11.0.0-alpha+1.21.4
 [10.1.1-alpha+1.21.3]: https://github.com/NorthRealm/SocksProxyClientOfMinecraft/compare/v10.1.0-alpha+1.21.1...v10.1.1-alpha+1.21.3
 [10.1.0-alpha+1.21.1]: https://github.com/NorthRealm/SocksProxyClientOfMinecraft/compare/v10.0.0-alpha+1.21.1...v10.1.0-alpha+1.21.1
