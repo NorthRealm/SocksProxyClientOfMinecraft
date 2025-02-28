@@ -17,7 +17,7 @@ public abstract class MixinSocks4ProxyHandler extends MixinProxyHandler {
     @Inject(method = "newInitialMessage", at = @At("HEAD"), remap = false)
     private void injected(ChannelHandlerContext ctx, CallbackInfoReturnable<Object> cir) {
         if (destinationAddress().equals(proxyAddress())) {
-            throw new IllegalArgumentException("You are not supposed to connect to the Socks4 proxy through itself.");
+            throw new IllegalStateException("You are not supposed to connect to the Socks4 proxy through itself.");
         }
     }
 }

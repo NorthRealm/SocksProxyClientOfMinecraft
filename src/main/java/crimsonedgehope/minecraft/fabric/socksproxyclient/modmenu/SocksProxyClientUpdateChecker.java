@@ -100,7 +100,7 @@ public final class SocksProxyClientUpdateChecker implements UpdateChecker {
                         case "release" -> UpdateChannel.RELEASE;
                         case "alpha" -> UpdateChannel.ALPHA;
                         case "beta" -> UpdateChannel.BETA;
-                        default -> throw new IllegalStateException("Unexpected value: " + releaseChannel);
+                        default -> throw new IllegalArgumentException("Unexpected value: " + releaseChannel);
                     };
                 }
             };
