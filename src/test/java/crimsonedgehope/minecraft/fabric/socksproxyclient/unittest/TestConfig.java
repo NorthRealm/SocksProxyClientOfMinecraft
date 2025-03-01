@@ -95,6 +95,12 @@ class TestConfig {
 
             SocksProxyClientConfigEntry<List> proxies = generalConfig.getEntryField("proxies", List.class);
             setEntry.apply(proxies, new ArrayList<String>());
+
+            SocksProxyClientConfigEntry<List> httpTestSubjects = generalConfig.getEntryField("httpTestSubjects", List.class);
+            setEntry.apply(httpTestSubjects, new ArrayList<String>());
+
+            SocksProxyClientConfigEntry<List> minecraftTestSubjects = generalConfig.getEntryField("minecraftTestSubjects", List.class);
+            setEntry.apply(minecraftTestSubjects, new ArrayList<String>());
         });
 
         reload.run();
@@ -105,6 +111,12 @@ class TestConfig {
 
             SocksProxyClientConfigEntry<List> proxies = generalConfig.getEntryField("proxies", List.class);
             Assertions.assertTrue(proxies.getValue().isEmpty());
+
+            SocksProxyClientConfigEntry<List> httpTestSubjects = generalConfig.getEntryField("httpTestSubjects", List.class);
+            Assertions.assertTrue(httpTestSubjects.getValue().isEmpty());
+
+            SocksProxyClientConfigEntry<List> minecraftTestSubjects = generalConfig.getEntryField("minecraftTestSubjects", List.class);
+            Assertions.assertTrue(minecraftTestSubjects.getValue().isEmpty());
         });
 
         final List<ProxyEntry> fakeProxies = new ArrayList<>() {{
@@ -114,11 +126,31 @@ class TestConfig {
             add(new ProxyEntry(SocksVersion.SOCKS5, new InetSocketAddress("192.168.0.1", 1084), "admin", "123456"));
         }};
 
+        final List<String> fakeHttpTestSubjects = new ArrayList<>() {{
+            add("http://example.com");
+            add("https://example.org");
+        }};
+
+        final List<String> fakeMinecraftTestSubjects = new ArrayList<>() {{
+            add("127.0.0.1");
+            add("127.0.0.2:25566");
+            add("example.org");
+            add("example.org:25567");
+        }};
+
         reload.run();
         getObjects.run();
         Assertions.assertDoesNotThrow(() -> {
             SocksProxyClientConfigEntry<List> proxies = generalConfig.getEntryField("proxies", List.class);
             setEntry.apply(proxies, fakeProxies);
+        });
+        Assertions.assertDoesNotThrow(() -> {
+            SocksProxyClientConfigEntry<List> httpTestSubjects = generalConfig.getEntryField("httpTestSubjects", List.class);
+            setEntry.apply(httpTestSubjects, fakeHttpTestSubjects);
+        });
+        Assertions.assertDoesNotThrow(() -> {
+            SocksProxyClientConfigEntry<List> minecraftTestSubjects = generalConfig.getEntryField("minecraftTestSubjects", List.class);
+            setEntry.apply(minecraftTestSubjects, fakeMinecraftTestSubjects);
         });
 
         reload.run();
@@ -145,6 +177,20 @@ class TestConfig {
             Assertions.assertEquals(1084, ((InetSocketAddress) ((ProxyEntry) proxies.getValue().get(3)).getProxy().address()).getPort());
             Assertions.assertEquals("admin", ((ProxyEntry) proxies.getValue().get(3)).getSocksProxyCredential().getUsername());
             Assertions.assertEquals("123456", ((ProxyEntry) proxies.getValue().get(3)).getSocksProxyCredential().getPassword());
+
+            SocksProxyClientConfigEntry<List> httpTestSubjects = generalConfig.getEntryField("httpTestSubjects", List.class);
+            Assertions.assertFalse(httpTestSubjects.getValue().isEmpty());
+
+            Assertions.assertEquals("http://example.com", httpTestSubjects.getValue().get(0));
+            Assertions.assertEquals("https://example.org", httpTestSubjects.getValue().get(1));
+
+            SocksProxyClientConfigEntry<List> minecraftTestSubjects = generalConfig.getEntryField("minecraftTestSubjects", List.class);
+            Assertions.assertFalse(minecraftTestSubjects.getValue().isEmpty());
+
+            Assertions.assertEquals("127.0.0.1", minecraftTestSubjects.getValue().get(0));
+            Assertions.assertEquals("127.0.0.2:25566", minecraftTestSubjects.getValue().get(1));
+            Assertions.assertEquals("example.org", minecraftTestSubjects.getValue().get(2));
+            Assertions.assertEquals("example.org:25567", minecraftTestSubjects.getValue().get(3));
         });
     }
 

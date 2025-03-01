@@ -56,7 +56,6 @@ public class SocksProxyClientMixinPlugin implements IMixinConfigPlugin {
         if (viaFabricPlusLive) {
             if (mixinClassName.equals("crimsonedgehope.minecraft.fabric.socksproxyclient.injection.mixin.network.MixinMultiplayerServerListPinger")) {
                 ret = false;
-                LOGGER.info("Dismiss MixinMultiplayerServerListPinger");
             }
         }
         return ret;

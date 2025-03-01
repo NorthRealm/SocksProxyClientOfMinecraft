@@ -23,8 +23,9 @@
     "network.MixinClientConnection",
     "network.MixinClientConnection_1",
     "network.MixinMultiplayerServerListPinger",
-    "screen.MixinMultiplayerScreen",
-    "screen.AccessorScreen"
+    "screen.AccessorScreen",
+    "screen.MixinConnectScreen_1",
+    "screen.MixinMultiplayerScreen"
   ],
   "injectors": {
     "defaultRequire": 1

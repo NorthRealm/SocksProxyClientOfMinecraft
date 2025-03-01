@@ -5,6 +5,7 @@ import crimsonedgehope.minecraft.fabric.socksproxyclient.injection.access.IMixin
 import io.netty.channel.ChannelFuture;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.network.ServerInfo;
 import net.minecraft.network.ClientConnection;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -19,6 +20,8 @@ import java.net.InetSocketAddress;
 public class MixinClientConnection implements IMixinClientConnection {
     @Unique
     private InetSocketAddress remote;
+    @Unique
+    private ServerInfo serverInfo;
 
     @Override
     public InetSocketAddress socksProxyClient$getInetSocketAddress() {
@@ -30,12 +33,22 @@ public class MixinClientConnection implements IMixinClientConnection {
         this.remote = inetSocketAddress;
     }
 
+    @Override
+    public ServerInfo socksProxyClient$getServerInfo() {
+        return serverInfo;
+    }
+
+    @Override
+    public void socksProxyClient$setServerInfo(ServerInfo serverInfo) {
+        this.serverInfo = serverInfo;
+    }
+
     @Inject(
             method = "connect(Ljava/net/InetSocketAddress;ZLnet/minecraft/network/ClientConnection;)Lio/netty/channel/ChannelFuture;",
             at = @At("HEAD")
     )
     private static void injected(InetSocketAddress address, boolean useEpoll, ClientConnection connection, CallbackInfoReturnable<ChannelFuture> cir) {
         ((IMixinClientConnection) connection).socksProxyClient$setInetSocketAddress(address);
-        SocksProxyClient.getLogger("Connect").debug("Remote Minecraft server {}", address);
+        SocksProxyClient.getLogger("Connect").debug("Connecting to remote Minecraft server {}", address);
     }
 }

@@ -4,11 +4,14 @@ import crimsonedgehope.minecraft.fabric.socksproxyclient.SocksProxyClient;
 import crimsonedgehope.minecraft.fabric.socksproxyclient.config.GeneralConfig;
 import crimsonedgehope.minecraft.fabric.socksproxyclient.config.ServerConfig;
 import crimsonedgehope.minecraft.fabric.socksproxyclient.config.entry.ProxyEntry;
+import crimsonedgehope.minecraft.fabric.socksproxyclient.injection.access.IMixinClientConnection;
 import io.netty.channel.ChannelPipeline;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.network.ServerInfo;
+import net.minecraft.network.ClientConnection;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
@@ -16,6 +19,8 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 @Environment(EnvType.CLIENT)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -39,27 +44,49 @@ public final class SocksSelection {
         LOGGER.info("{}", builder);
     }
 
-    public static void fire(InetSocketAddress remote, ChannelPipeline pipeline) {
-        fire(remote, pipeline, false);
-    }
+    public static final Function<InetAddress, Supplier<List<ProxyEntry>>> supplierForMinecraft = (address) -> () -> {
+        List<ProxyEntry> proxies;
+        if (address.isLoopbackAddress()) {
+            proxies = ServerConfig.getProxyEntryForMinecraftLoopback();
+        } else {
+            proxies = ServerConfig.getProxyEntryForMinecraft();
+        }
+        return proxies;
+    };
 
-    public static void fire(InetSocketAddress remote, ChannelPipeline pipeline, boolean always) {
-        if (Objects.isNull(remote)) {
-            return;
+    public static final Supplier<List<ProxyEntry>> supplier = () -> GeneralConfig.getProxyEntry(true);
+
+    public static void fire(@NotNull ClientConnection clientConnection, @NotNull ChannelPipeline pipeline) {
+        IMixinClientConnection imixin = (IMixinClientConnection) clientConnection;
+
+        ServerInfo serverInfo = imixin.socksProxyClient$getServerInfo();
+        InetSocketAddress remote = imixin.socksProxyClient$getInetSocketAddress();
+
+        // TODO: Remove
+        if (Objects.nonNull(serverInfo) && serverInfo.getServerType().equals(ServerInfo.ServerType.OTHER)) {
+            if (serverInfo.address.equals("mc.hypixel.net")) {
+                apply(remote, List.of(), pipeline);
+                return;
+            }
         }
 
         InetAddress address = remote.getAddress();
+        fire(remote, pipeline, supplierForMinecraft.apply(address));
+    }
 
-        List<ProxyEntry> proxies;
-        if (!always) {
-            if (address.isLoopbackAddress()) {
-                proxies = ServerConfig.getProxyEntryForMinecraftLoopback();
-            } else {
-                proxies = ServerConfig.getProxyEntryForMinecraft();
-            }
-        } else {
-            proxies = GeneralConfig.getProxyEntry(true);
+    public static void fire(InetSocketAddress remote, ChannelPipeline pipeline) {
+        fire(remote, pipeline, supplier);
+    }
+
+    public static void fire(InetSocketAddress remote, ChannelPipeline pipeline, Supplier<List<ProxyEntry>> supplier) {
+        if (Objects.isNull(remote)) {
+            LOGGER.debug("fire: remote is null");
+            return;
         }
+        apply(remote, supplier.get(), pipeline);
+    }
+
+    private static void apply(@NotNull InetSocketAddress remote, @NotNull List<ProxyEntry> proxies, @NotNull ChannelPipeline pipeline) {
         SocksUtils.apply(pipeline, proxies);
         info(proxies, remote);
     }

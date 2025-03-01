@@ -1,6 +1,7 @@
 package crimsonedgehope.minecraft.fabric.socksproxyclient.config.yacl.screen;
 
 import com.google.common.net.HostAndPort;
+import crimsonedgehope.minecraft.fabric.socksproxyclient.config.ConfigUtils;
 import crimsonedgehope.minecraft.fabric.socksproxyclient.config.entry.ProxyEntry;
 import crimsonedgehope.minecraft.fabric.socksproxyclient.i18n.TranslateKeys;
 import crimsonedgehope.minecraft.fabric.socksproxyclient.proxy.socks.SocksProxyCredential;
@@ -17,7 +18,6 @@ import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 
-import java.net.IDN;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.util.Objects;
@@ -149,13 +149,7 @@ public class ProxyEntryEditScreen extends Screen {
     private void updateSetButton() {
         this.setButton.active = ((Supplier<Boolean>) () -> {
             try {
-                HostAndPort hostAndPort = HostAndPort.fromString(this.proxyAddressField.getText()).withDefaultPort(0);
-                String string = hostAndPort.getHost();
-                int port = hostAndPort.getPort();
-                if (!string.isEmpty() && port > 0 && port <= 65535) {
-                    IDN.toASCII(string);
-                    return true;
-                }
+                return ConfigUtils.addressValidity.test(this.proxyAddressField.getText());
             } catch (Exception e) {
                 // No op
             }

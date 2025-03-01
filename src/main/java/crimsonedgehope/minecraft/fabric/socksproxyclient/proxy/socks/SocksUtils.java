@@ -3,6 +3,7 @@ package crimsonedgehope.minecraft.fabric.socksproxyclient.proxy.socks;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
+import crimsonedgehope.minecraft.fabric.socksproxyclient.config.GeneralConfig;
 import crimsonedgehope.minecraft.fabric.socksproxyclient.config.SocksProxyClientConfig;
 import crimsonedgehope.minecraft.fabric.socksproxyclient.config.entry.ProxyEntry;
 import crimsonedgehope.minecraft.fabric.socksproxyclient.i18n.TranslateKeys;
@@ -73,19 +74,12 @@ public final class SocksUtils {
             return;
         }
         testTime = System.currentTimeMillis();
-        for (String url : new String[]{
-                "https://api.mojang.com",
-                "https://ipinfo.io",
-                "http://connectivitycheck.gstatic.com/generate_204"
-        }) {
+        for (String url : GeneralConfig.getHTTPTestSubjects()) {
             scheduler.submit(() -> {
                 testHTTP(url);
             });
         }
-        for (String domain : new String[]{
-            "mc.hypixel.net",
-            "play.cubecraft.net"
-        }) {
+        for (String domain : GeneralConfig.getMinecraftTestSubjects()) {
             scheduler.submit(() -> {
                 testMinecraftPing(domain);
             });
