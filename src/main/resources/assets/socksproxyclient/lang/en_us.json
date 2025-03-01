@@ -19,6 +19,10 @@
   "socksproxyclient.config.general.proxy.testing": "Testing proxy",
   "socksproxyclient.config.general.proxy.test.success": "Test successful.",
   "socksproxyclient.config.general.proxy.test.failure": "Test failed.",
+  "socksproxyclient.config.general.proxy.test.httpSubjects": "Proxy test HTTP urls",
+  "socksproxyclient.config.general.proxy.test.httpSubjects.tooltip": "HTTP urls used for proxy testing",
+  "socksproxyclient.config.general.proxy.test.minecraftSubjects": "Proxy test Minecraft server addresses",
+  "socksproxyclient.config.general.proxy.test.minecraftSubjects.tooltip": "Minecraft server addresses used for proxy testing",
 
   "socksproxyclient.config.server": "Server settings",
   "socksproxyclient.config.server.tooltip": "Configuration for proxy's scope of effectiveness",

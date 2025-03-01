@@ -204,7 +204,7 @@ public class HttpProxy {
                                 if (GeneralConfig.getProxyEntry().isEmpty()) {
                                     channel.pipeline().addFirst(new ChannelDuplexHandler());
                                 } else {
-                                    SocksSelection.fire(InetSocketAddress.createUnresolved(remoteHttpHost, remoteHttpPort), channel.pipeline(), true);
+                                    SocksSelection.fire(InetSocketAddress.createUnresolved(remoteHttpHost, remoteHttpPort), channel.pipeline());
                                 }
                             }
                         })

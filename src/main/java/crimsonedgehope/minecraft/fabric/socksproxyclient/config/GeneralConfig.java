@@ -41,6 +41,22 @@ public final class GeneralConfig extends SocksProxyClientConfig {
                     new ArrayList<>() {{
                         add(new ProxyEntry(SocksVersion.SOCKS5, new InetSocketAddress("localhost", 1080)));
                     }});
+    private static final SocksProxyClientConfigEntry<List<String>> httpTestSubjects =
+            new SocksProxyClientConfigEntry<>(INSTANCE.getClass(), "httpTestSubjects",
+                    Text.translatable(TranslateKeys.SOCKSPROXYCLIENT_CONFIG_GENERAL_PROXY_TEST_HTTPSUBJECTS),
+                    Text.translatable(TranslateKeys.SOCKSPROXYCLIENT_CONFIG_GENERAL_PROXY_TEST_HTTPSUBJECTS_TOOLTIP),
+                    new ArrayList<>() {{
+                        add("https://api.mojang.com");
+                        add("https://ipinfo.io");
+                        add("http://connectivitycheck.gstatic.com/generate_204");
+                    }});
+    private static final SocksProxyClientConfigEntry<List<String>> minecraftTestSubjects =
+            new SocksProxyClientConfigEntry<>(INSTANCE.getClass(), "minecraftTestSubjects",
+                    Text.translatable(TranslateKeys.SOCKSPROXYCLIENT_CONFIG_GENERAL_PROXY_TEST_MINECRAFTSUBJECTS),
+                    Text.translatable(TranslateKeys.SOCKSPROXYCLIENT_CONFIG_GENERAL_PROXY_TEST_MINECRAFTSUBJECTS_TOOLTIP),
+                    new ArrayList<>() {{
+                        add("play.cubecraft.net");
+                    }});
 
     private GeneralConfig() {
         super(CATEGORY + ".json");
@@ -50,79 +66,132 @@ public final class GeneralConfig extends SocksProxyClientConfig {
     public JsonObject defaultEntries() {
         JsonObject obj = new JsonObject();
         obj.addProperty(useProxy.getJsonEntry(), useProxy.getDefaultValue());
-        JsonArray array = new JsonArray();
-        proxies.getDefaultValue().forEach(entry -> {
-            JsonObject proxyObj = new JsonObject();
-            proxyObj.addProperty("version", entry.getVersion().name());
-            proxyObj.addProperty("host", ((InetSocketAddress) entry.getProxy().address()).getHostString());
-            proxyObj.addProperty("port", ((InetSocketAddress) entry.getProxy().address()).getPort());
-            proxyObj.addProperty("username", entry.getSocksProxyCredential().getUsername());
-            proxyObj.addProperty("password", entry.getSocksProxyCredential().getPassword());
-            array.add(proxyObj);
-        });
-        obj.add(proxies.getJsonEntry(), array);
+
+        {
+            JsonArray proxyJsonArray = new JsonArray();
+            proxies.getDefaultValue().forEach(entry -> {
+                JsonObject proxyObj = new JsonObject();
+                proxyObj.addProperty("version", entry.getVersion().name());
+                proxyObj.addProperty("host", ((InetSocketAddress) entry.getProxy().address()).getHostString());
+                proxyObj.addProperty("port", ((InetSocketAddress) entry.getProxy().address()).getPort());
+                proxyObj.addProperty("username", entry.getSocksProxyCredential().getUsername());
+                proxyObj.addProperty("password", entry.getSocksProxyCredential().getPassword());
+                proxyJsonArray.add(proxyObj);
+            });
+            obj.add(proxies.getJsonEntry(), proxyJsonArray);
+        }
+
+        {
+            JsonArray httpTestSubjectJsonArray = new JsonArray();
+            httpTestSubjects.getDefaultValue().forEach(httpTestSubjectJsonArray::add);
+            obj.add(httpTestSubjects.getJsonEntry(), httpTestSubjectJsonArray);
+        }
+
+        {
+            JsonArray minecraftTestSubjectJsonArray = new JsonArray();
+            minecraftTestSubjects.getDefaultValue().forEach(minecraftTestSubjectJsonArray::add);
+            obj.add(minecraftTestSubjects.getJsonEntry(), minecraftTestSubjectJsonArray);
+        }
+
         return obj;
     }
 
     @Override
     public void fromJsonObject(JsonObject entries) {
         useProxy.setValue(entries.get(useProxy.getJsonEntry()).getAsBoolean());
-        List<ProxyEntry> list = new ArrayList<>();
-        JsonArray array = (JsonArray) entries.get("proxies");
 
-        SocksVersion version;
-        String host;
-        int port;
-        String username;
-        String password;
+        {
+            List<ProxyEntry> proxyEntryArrayList = new ArrayList<>();
+            JsonArray array = (JsonArray) entries.get(proxies.getJsonEntry());
 
-        for (JsonElement element : array) {
-            JsonObject proxyObj = (JsonObject) element;
-            try {
-                version = SocksVersion.valueOf(proxyObj.get("version").getAsString());
-            } catch (Exception e) {
-                version = SocksVersion.SOCKS5;
-            }
-            host = proxyObj.get("host").getAsString();
-            if (Objects.isNull(host)) {
-                host = "localhost";
-            }
-            try {
-                port = proxyObj.get("port").getAsInt();
-            } catch (Exception e) {
-                port = 1080;
-            }
-            try {
-                username = proxyObj.get("username").getAsString();
-            } catch (Exception e) {
-                username = null;
-            }
-            try {
-                password = proxyObj.get("password").getAsString();
-            } catch (Exception e) {
-                password = null;
-            }
+            SocksVersion version;
+            String host;
+            int port;
+            String username;
+            String password;
 
-            list.add(new ProxyEntry(version, new InetSocketAddress(host, port), username, password));
+            for (JsonElement element : array) {
+                JsonObject proxyObj = (JsonObject) element;
+                try {
+                    version = SocksVersion.valueOf(proxyObj.get("version").getAsString());
+                } catch (Exception e) {
+                    version = SocksVersion.SOCKS5;
+                }
+                host = proxyObj.get("host").getAsString();
+                if (Objects.isNull(host)) {
+                    host = "localhost";
+                }
+                try {
+                    port = proxyObj.get("port").getAsInt();
+                } catch (Exception e) {
+                    port = 1080;
+                }
+                try {
+                    username = proxyObj.get("username").getAsString();
+                } catch (Exception e) {
+                    username = null;
+                }
+                try {
+                    password = proxyObj.get("password").getAsString();
+                } catch (Exception e) {
+                    password = null;
+                }
+
+                proxyEntryArrayList.add(new ProxyEntry(version, new InetSocketAddress(host, port), username, password));
+            }
+            proxies.setValue(proxyEntryArrayList);
         }
-        proxies.setValue(list);
+
+        {
+            List<String> httpTestSubjectArrayList = new ArrayList<>();
+            JsonArray array = (JsonArray) entries.get(httpTestSubjects.getJsonEntry());
+            for (JsonElement element : array) {
+                httpTestSubjectArrayList.add(element.getAsString());
+            }
+            httpTestSubjects.setValue(httpTestSubjectArrayList);
+        }
+
+        {
+            List<String> minecraftTestSubjectArrayList = new ArrayList<>();
+            JsonArray array = (JsonArray) entries.get(minecraftTestSubjects.getJsonEntry());
+            for (JsonElement element : array) {
+                minecraftTestSubjectArrayList.add(element.getAsString());
+            }
+            minecraftTestSubjects.setValue(minecraftTestSubjectArrayList);
+        }
     }
 
     @Override
     public JsonObject toJsonObject() {
         JsonObject obj = new JsonObject();
         obj.addProperty(useProxy.getJsonEntry(), useProxy.getValue());
-        JsonArray array = new JsonArray();
-        proxies.getValue().forEach(entry -> {
-            JsonObject proxyObj = new JsonObject();
-            proxyObj.addProperty("version", entry.getVersion().name());
-            proxyObj.addProperty("host", ((InetSocketAddress) entry.getProxy().address()).getHostString());
-            proxyObj.addProperty("port", ((InetSocketAddress) entry.getProxy().address()).getPort());
-            proxyObj.addProperty("username", entry.getSocksProxyCredential().getUsername());
-            proxyObj.addProperty("password", entry.getSocksProxyCredential().getPassword());
-            array.add(proxyObj);
-        });
-        obj.add(proxies.getJsonEntry(), array);
+
+        {
+            JsonArray proxyJsonArray = new JsonArray();
+            proxies.getValue().forEach(entry -> {
+                JsonObject proxyObj = new JsonObject();
+                proxyObj.addProperty("version", entry.getVersion().name());
+                proxyObj.addProperty("host", ((InetSocketAddress) entry.getProxy().address()).getHostString());
+                proxyObj.addProperty("port", ((InetSocketAddress) entry.getProxy().address()).getPort());
+                proxyObj.addProperty("username", entry.getSocksProxyCredential().getUsername());
+                proxyObj.addProperty("password", entry.getSocksProxyCredential().getPassword());
+                proxyJsonArray.add(proxyObj);
+            });
+            obj.add(proxies.getJsonEntry(), proxyJsonArray);
+        }
+
+        {
+            JsonArray httpTestSubjectJsonArray = new JsonArray();
+            httpTestSubjects.getValue().forEach(httpTestSubjectJsonArray::add);
+            obj.add(httpTestSubjects.getJsonEntry(), httpTestSubjectJsonArray);
+        }
+
+        {
+            JsonArray minecraftTestSubjectJsonArray = new JsonArray();
+            minecraftTestSubjects.getValue().forEach(minecraftTestSubjectJsonArray::add);
+            obj.add(minecraftTestSubjects.getJsonEntry(), minecraftTestSubjectJsonArray);
+        }
+
         return obj;
     }
 
@@ -141,5 +210,13 @@ public final class GeneralConfig extends SocksProxyClientConfig {
             return new ArrayList<>();
         }
         return proxies.getValue();
+    }
+
+    public static List<String> getHTTPTestSubjects() {
+        return httpTestSubjects.getValue();
+    }
+
+    public static List<String> getMinecraftTestSubjects() {
+        return minecraftTestSubjects.getValue();
     }
 }
