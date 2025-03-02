@@ -248,9 +248,6 @@ class TestConfig {
                 SocksProxyClientConfigEntry<Boolean> httpRemoteResolve = serverConfig.getEntryField("httpRemoteResolve", Boolean.class);
                 action.apply(httpRemoteResolve, !httpRemoteResolve.getDefaultValue());
 
-                SocksProxyClientConfigEntry<Boolean> imposeProxyOnMinecraftLoopback = serverConfig.getEntryField("imposeProxyOnMinecraftLoopback", Boolean.class);
-                action.apply(imposeProxyOnMinecraftLoopback, !imposeProxyOnMinecraftLoopback.getDefaultValue());
-
                 SocksProxyClientConfigEntry<DOHProvider> minecraftDomainNameResolutionDohProvider = serverConfig.getEntryField("minecraftDomainNameResolutionDohProvider", DOHProvider.class);
                 action.apply(minecraftDomainNameResolutionDohProvider, DOHProvider.CUSTOM);
             });
