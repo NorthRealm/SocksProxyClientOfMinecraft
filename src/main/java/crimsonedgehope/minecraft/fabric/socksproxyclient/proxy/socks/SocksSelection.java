@@ -44,15 +44,7 @@ public final class SocksSelection {
         LOGGER.info("{}", builder);
     }
 
-    public static final Function<InetAddress, Supplier<List<ProxyEntry>>> supplierForMinecraft = (address) -> () -> {
-        List<ProxyEntry> proxies;
-        if (address.isLoopbackAddress()) {
-            proxies = ServerConfig.getProxyEntryForMinecraftLoopback();
-        } else {
-            proxies = ServerConfig.getProxyEntryForMinecraft();
-        }
-        return proxies;
-    };
+    public static final Function<InetAddress, Supplier<List<ProxyEntry>>> supplierForMinecraft = (address) -> ServerConfig::getProxyEntryForMinecraft;
 
     public static final Supplier<List<ProxyEntry>> supplier = () -> GeneralConfig.getProxyEntry(true);
 

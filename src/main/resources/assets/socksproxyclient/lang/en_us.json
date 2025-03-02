@@ -48,9 +48,6 @@
   "socksproxyclient.config.server.services.proxyBlockListSupplier.tooltip": "Minecraft client automatically fetches Mojang's server block list to determine which server has been blocked by Mojang. It uses HTTP protocol to exchange information.",
   "socksproxyclient.config.server.services.httpRemoteResolve": "Proxy DNS for HTTP(S) communications when using Socks 5",
   "socksproxyclient.config.server.services.httpRemoteResolve.tooltip": "This setting also applies to DoH. However, if your proxy chain has SOCKS 4 proxy, this setting won't be effective.",
-  "socksproxyclient.config.server.advanced": "Advanced",
-  "socksproxyclient.config.server.advanced.imposeProxyOnMinecraftLoopback": "Impose proxy on Minecraft servers on loopback address",
-  "socksproxyclient.config.server.advanced.imposeProxyOnMinecraftLoopback.tooltip": "Mostly you don't need to enable this at all.",
 
   "socksproxyclient.config.miscellaneous": "Miscellaneous settings",
   "socksproxyclient.config.miscellaneous.buttonInMultiplayerScreen": "Show config button in multiplayer screen",
