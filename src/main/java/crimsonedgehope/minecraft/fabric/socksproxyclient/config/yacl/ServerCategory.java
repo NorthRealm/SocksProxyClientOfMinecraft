@@ -28,8 +28,6 @@ final class ServerCategory extends YACLCategory<ServerConfig> {
     SocksProxyClientConfigEntry<Boolean> proxyBlockListSupplier;
     SocksProxyClientConfigEntry<Boolean> httpRemoteResolve;
 
-    SocksProxyClientConfigEntry<Boolean> imposeProxyOnMinecraftLoopback;
-
     ServerCategory(YACLAccess yacl) {
         super(yacl, ServerConfig.class);
     }
@@ -155,20 +153,6 @@ final class ServerCategory extends YACLCategory<ServerConfig> {
                 .option(yaclHttpRemoteResolve);
 
         categoryBuilder.group(groupServices.build());
-
-        OptionGroup.Builder groupAdvanced = OptionGroup.createBuilder().collapsed(true);
-        groupAdvanced.name(Text.translatable(TranslateKeys.SOCKSPROXYCLIENT_CONFIG_SERVER_ADVANCED));
-
-        imposeProxyOnMinecraftLoopback = entryField("imposeProxyOnMinecraftLoopback", Boolean.class);
-        Option<Boolean> yaclImposeProxyOnMinecraftLoopback = Option.<Boolean>createBuilder()
-                .name(imposeProxyOnMinecraftLoopback.getEntryTranslateKey())
-                .description(OptionDescription.of(imposeProxyOnMinecraftLoopback.getDescriptionTranslateKey()))
-                .binding(imposeProxyOnMinecraftLoopback.getDefaultValue(), imposeProxyOnMinecraftLoopback::getValue, imposeProxyOnMinecraftLoopback::setValue)
-                .controller(opt -> BooleanControllerBuilder.create(opt).yesNoFormatter().coloured(true))
-                .build();
-        groupAdvanced.option(yaclImposeProxyOnMinecraftLoopback);
-
-        categoryBuilder.group(groupAdvanced.build());
 
         return categoryBuilder.build();
     }
