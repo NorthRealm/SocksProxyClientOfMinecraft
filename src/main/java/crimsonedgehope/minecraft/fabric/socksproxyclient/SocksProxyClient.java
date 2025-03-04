@@ -10,9 +10,7 @@ import org.slf4j.LoggerFactory;
 
 @Environment(EnvType.CLIENT)
 public class SocksProxyClient implements ClientModInitializer {
-	
-	public static final String ID = "socksproxyclient";
-	
+
 	public static void preInit() throws Exception {
 		ConfigUtils.loadAllConfig();
 		HttpProxy.INSTANCE.fire();

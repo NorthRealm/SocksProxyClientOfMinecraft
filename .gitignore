@@ -40,4 +40,5 @@ replay_*.log
 *.jfr
 
 TranslateKeys.java
+Constants.java
 runtest/

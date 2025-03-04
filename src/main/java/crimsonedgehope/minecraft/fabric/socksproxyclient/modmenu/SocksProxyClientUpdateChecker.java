@@ -8,6 +8,7 @@ import com.terraformersmc.modmenu.api.UpdateChannel;
 import com.terraformersmc.modmenu.api.UpdateChecker;
 import com.terraformersmc.modmenu.api.UpdateInfo;
 import com.terraformersmc.modmenu.util.HttpUtil;
+import crimsonedgehope.minecraft.fabric.socksproxyclient.Constants;
 import crimsonedgehope.minecraft.fabric.socksproxyclient.SocksProxyClient;
 import crimsonedgehope.minecraft.fabric.socksproxyclient.config.MiscellaneousConfig;
 import lombok.NoArgsConstructor;
@@ -58,7 +59,7 @@ public final class SocksProxyClientUpdateChecker implements UpdateChecker {
             }
 
             JsonObject releaseChannels = gameVersions.getAsJsonObject(minecraftVersion);
-            String modVersion = FabricLoader.getInstance().getModContainer(SocksProxyClient.ID).get().getMetadata().getVersion().getFriendlyString();
+            String modVersion = FabricLoader.getInstance().getModContainer(Constants.MOD_ID).get().getMetadata().getVersion().getFriendlyString();
             SemanticVersion semanticModVersion = VersionParser.parseSemantic(modVersion);
 
             String releaseChannel = semanticModVersion.getPrereleaseKey().orElse("release");
