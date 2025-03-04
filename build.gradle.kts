@@ -71,9 +71,20 @@ tasks.register<crimsonedgehope.minecraft.fabric.socksproxyclient.gradle.Generate
 	outputDir = "${rootProject.projectDir}/src/main/java/"
 }
 
+tasks.register<crimsonedgehope.minecraft.fabric.socksproxyclient.gradle.GenerateConstantsClassTask>("generateConstantsClass") {
+	val packageTarget0 = "crimsonedgehope.minecraft.fabric.socksproxyclient"
+	constants = mapOf(
+		"mod_id" to project.findProperty("mod_id")
+	)
+	packageTarget = packageTarget0
+	outputDir = "${rootProject.projectDir}/src/main/java/"
+}
+
 tasks.compileJava {
 	dependsOn("generateTranslateKeys")
 	mustRunAfter("generateTranslateKeys")
+	dependsOn("generateConstantsClass")
+	mustRunAfter("generateConstantsClass")
 }
 
 tasks.processResources {
