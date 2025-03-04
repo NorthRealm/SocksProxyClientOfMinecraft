@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.stream.JsonReader;
+import crimsonedgehope.minecraft.fabric.socksproxyclient.Constants;
 import crimsonedgehope.minecraft.fabric.socksproxyclient.SocksProxyClient;
 import crimsonedgehope.minecraft.fabric.socksproxyclient.config.entry.SocksProxyClientConfigEntry;
 import lombok.Getter;
@@ -33,7 +34,7 @@ public abstract class SocksProxyClientConfig {
     public static final Logger LOGGER = SocksProxyClient.getLogger("Config");
 
     protected static Path configPathDir() {
-        Path path = FabricLoader.getInstance().getConfigDir().resolve(SocksProxyClient.ID);
+        Path path = FabricLoader.getInstance().getConfigDir().resolve(Constants.MOD_ID);
         File file = path.toFile();
         if (!path.toFile().exists()) {
             file.mkdirs();
