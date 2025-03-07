@@ -20,7 +20,38 @@ permissions:
   checks: write
 
 jobs:
-  buildJar:
+  buildJar121:
+    name: Build jar ${{ matrix.minecraft_version }}
+    uses: NorthRealm/SocksProxyClientOfMinecraft/.github/workflows/jar.yml@master
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - minecraft_version: "1.21"
+            yarn_mappings: "1.21+build.9"
+            fabric_version: "0.102.0+1.21"
+            yacl_fabric: "1.21-fabric"
+            modmenu_version: "11.0.3"
+
+          - minecraft_version: "1.21.1"
+            yarn_mappings: "1.21.1+build.3"
+            fabric_version: "0.115.0+1.21.1"
+            yacl_fabric: "1.21-fabric"
+            modmenu_version: "11.0.3"
+
+          - minecraft_version: "1.21.2"
+            yarn_mappings: "1.21.2+build.1"
+            fabric_version: "0.106.1+1.21.2"
+            yacl_fabric: "1.21.2-fabric"
+            modmenu_version: "12.0.0"
+    with:
+      build-ref: "1.21.3"
+      java-version: "21"
+      java-distribution: "oracle"
+      gradle-build-properties: -Pminecraft_version=${{ matrix.minecraft_version }} -Pyarn_mappings=${{ matrix.yarn_mappings }} -Pfabric_version=${{ matrix.fabric_version }} -Pyacl_fabric=${{ matrix.yacl_fabric }} -Pmodmenu_version=${{ matrix.modmenu_version }}
+      gradle-test-properties: -Pminecraft_version=${{ matrix.minecraft_version }} -Pyarn_mappings=${{ matrix.yarn_mappings }} -Pfabric_version=${{ matrix.fabric_version }} -Pyacl_fabric=${{ matrix.yacl_fabric }} -Pmodmenu_version=${{ matrix.modmenu_version }}
+
+  buildJar1213:
     name: Build jar 1.21.3
     uses: NorthRealm/SocksProxyClientOfMinecraft/.github/workflows/jar.yml@master
     with:
