@@ -3,10 +3,13 @@ package crimsonedgehope.minecraft.fabric.socksproxyclient.config.yacl.controller
 import dev.isxander.yacl3.api.Controller;
 import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.impl.controller.StringControllerBuilderImpl;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import org.apache.commons.lang3.Validate;
 
 import java.util.function.Predicate;
 
+@Environment(EnvType.CLIENT)
 public class ValidStringControllerBuilderImpl extends StringControllerBuilderImpl implements ValidStringControllerBuilder {
     private Predicate<String> validityPredication = ValidStringController.VALIDITY;
 

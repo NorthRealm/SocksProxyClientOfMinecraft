@@ -4,9 +4,12 @@ import crimsonedgehope.minecraft.fabric.socksproxyclient.config.entry.ProxyEntry
 import dev.isxander.yacl3.api.Controller;
 import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.gui.YACLScreen;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.util.TriConsumer;
 
+@Environment(EnvType.CLIENT)
 public class ProxyEntryControllerBuilderImpl implements ProxyEntryControllerBuilder {
     private final Option<ProxyEntry> option;
     private TriConsumer<YACLScreen, ProxyEntry, Runnable> action;
