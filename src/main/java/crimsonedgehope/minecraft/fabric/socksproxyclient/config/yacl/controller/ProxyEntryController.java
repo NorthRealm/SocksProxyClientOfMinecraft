@@ -8,6 +8,8 @@ import dev.isxander.yacl3.api.utils.Dimension;
 import dev.isxander.yacl3.gui.AbstractWidget;
 import dev.isxander.yacl3.gui.YACLScreen;
 import dev.isxander.yacl3.gui.controllers.ControllerWidget;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.Text;
 import org.apache.logging.log4j.util.TriConsumer;
@@ -15,6 +17,7 @@ import org.jetbrains.annotations.ApiStatus;
 
 import java.net.InetSocketAddress;
 
+@Environment(EnvType.CLIENT)
 public class ProxyEntryController implements Controller<ProxyEntry> {
     private final Option<ProxyEntry> option;
     private final TriConsumer<YACLScreen, ProxyEntry, Runnable> action;
