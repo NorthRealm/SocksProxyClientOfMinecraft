@@ -60,7 +60,7 @@ dependencies {
 	compileOnly("org.projectlombok:lombok:${project.extra["lombok_version"]}")
 
 	// https://github.com/FabricMC/fabric-loader/issues/966
-	modLocalRuntime("net.fabricmc.fabric-api:fabric-api:0.110.0+1.21.3")
+	modLocalRuntime("net.fabricmc.fabric-api:fabric-api:${project.findProperty("fabric_version")}")
 	testImplementation("net.fabricmc:fabric-loader-junit:${project.findProperty("fabricloader_version")}")
 }
 
