@@ -1,7 +1,7 @@
 package crimsonedgehope.minecraft.fabric.socksproxyclient.injection.mixin.network;
 
 import com.llamalad7.mixinextras.sugar.Local;
-import crimsonedgehope.minecraft.fabric.socksproxyclient.proxy.socks.SocksSelection;
+import crimsonedgehope.minecraft.fabric.socksproxyclient.injection.access.ProxySelection;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelPipeline;
 import net.fabricmc.api.EnvType;
@@ -22,6 +22,6 @@ public class MixinClientConnection_1 {
 
     @Inject(method = "initChannel", at = @At("TAIL"))
     private void injected(Channel channel, CallbackInfo ci, @Local ChannelPipeline channelPipeline) {
-        SocksSelection.fire(field_11663, channelPipeline);
+        ProxySelection.fire(field_11663, channelPipeline);
     }
 }
