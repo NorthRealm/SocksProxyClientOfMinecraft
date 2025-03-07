@@ -13,10 +13,22 @@ on:
         type: string
         required: false
         default: "oracle"
+      gradle-build-properties:
+        type: string
+        required: false
+        default: ""
+      gradle-test-properties:
+        type: string
+        required: false
+        default: ""
 
 permissions:
   contents: read
   checks: write
+
+defaults:
+  run:
+    shell: bash
 
 jobs:
   buildJar:
@@ -36,9 +48,20 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
       - name: Build
-        run: ./gradlew build
+        run: ./gradlew build ${{ inputs.gradle-build-properties }}
       - name: Test
-        run: ./gradlew test
+        run: ./gradlew test ${{ inputs.gradle-test-properties }}
+      - name: Properties
+        id: properties
+        run: |
+          minecraft_version=$(./gradlew properties ${{ inputs.gradle-build-properties }} | grep "^minecraft_version:" | awk '{print $2}')
+          echo "minecraft_version=$minecraft_version" >> $GITHUB_OUTPUT
+          
+          fabricloader_version=$(./gradlew properties ${{ inputs.gradle-build-properties }} | grep "^fabricloader_version:" | awk '{print $2}')
+          echo "fabricloader_version=$fabricloader_version" >> $GITHUB_OUTPUT
+          
+          mod_version=$(./gradlew properties ${{ inputs.gradle-build-properties }} | grep "^mod_version:" | awk '{print $2}')
+          echo "mod_version=$mod_version" >> $GITHUB_OUTPUT
       - name: Publish Test Report
         uses: mikepenz/action-junit-report@v5
         if: ${{ success() || failure() }}
@@ -48,12 +71,13 @@ jobs:
           detailed_summary: true
           fail_on_failure: true
           require_tests: true
+          check_name: Test Report (Minecraft ${{ steps.properties.outputs.minecraft_version }}, Mod version ${{ steps.properties.outputs.mod_version }}, FabricLoader ${{ steps.properties.outputs.fabricloader_version }})
           check_title_template: '{{SUITE_NAME}} | {{TEST_NAME}}'
       - name: Upload jar artifact
         uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
-          name: buildJar-${{ inputs.build-ref }}-${{ github.run_id }}
+          name: buildJar-${{ inputs.build-ref }}-${{ github.run_id }}-${{ steps.properties.outputs.minecraft_version }}-${{ steps.properties.outputs.mod_version }}-${{ steps.properties.outputs.fabricloader_version }}
           path: './build/libs/*.jar'
           retention-days: 30
           overwrite: "true"
