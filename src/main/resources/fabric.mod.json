@@ -41,5 +41,9 @@
   "conflicts": {
     "fastipping": "*",
     "viafabricplus": "*"
+  },
+  "breaks": {
+    "yggdrasil-proxy-fabric": "*",
+    "proxyserver": "*"
   }
 }
