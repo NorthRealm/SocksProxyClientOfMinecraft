@@ -28,7 +28,8 @@
     "network.MixinServerInfo",
     "screen.AccessorScreen",
     "screen.MixinConnectScreen_1",
-    "screen.MixinMultiplayerScreen"
+    "screen.MixinMultiplayerScreen",
+    "screen.MixinServerEntry"
   ],
   "injectors": {
     "defaultRequire": 1
