@@ -14,12 +14,12 @@ public class MixinMultiValueDebugSampleLogImpl implements IMixinMultiValueDebugS
     private boolean pingingUseProxy;
 
     @Override
-    public void socksProxyClient$setUseProxy(boolean useProxy) {
+    public void socksProxyClient$setPingingUseProxy(boolean useProxy) {
         this.pingingUseProxy = useProxy;
     }
 
     @Override
-    public boolean socksProxyClient$isUseProxy() {
+    public boolean socksProxyClient$isPingingUseProxy() {
         return pingingUseProxy;
     }
 }

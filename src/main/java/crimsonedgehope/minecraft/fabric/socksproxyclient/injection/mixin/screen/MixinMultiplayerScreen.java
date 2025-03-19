@@ -1,5 +1,6 @@
 package crimsonedgehope.minecraft.fabric.socksproxyclient.injection.mixin.screen;
 
+import com.llamalad7.mixinextras.sugar.Local;
 import crimsonedgehope.minecraft.fabric.socksproxyclient.SocksProxyClient;
 import crimsonedgehope.minecraft.fabric.socksproxyclient.config.MiscellaneousConfig;
 import crimsonedgehope.minecraft.fabric.socksproxyclient.config.yacl.YACLConfigScreen;
@@ -11,8 +12,11 @@ import net.minecraft.client.gui.widget.AxisGridWidget;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.DirectionalLayoutWidget;
 import net.minecraft.client.gui.widget.EmptyWidget;
+import net.minecraft.client.network.ServerInfo;
+import net.minecraft.client.option.ServerList;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -21,6 +25,10 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 @Environment(EnvType.CLIENT)
 @Mixin(MultiplayerScreen.class)
 public class MixinMultiplayerScreen {
+    @Shadow private ServerInfo selectedEntry;
+
+    @Shadow private ServerList serverList;
+
     @Inject(method = "init",
             at = @At(
                     value = "INVOKE",
@@ -60,5 +68,11 @@ public class MixinMultiplayerScreen {
         } catch (Exception e) {
             openConfigScreenButton.active = false;
         }
+    }
+
+    @Inject(method = "directConnect", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/multiplayer/MultiplayerScreen;connect(Lnet/minecraft/client/network/ServerInfo;)V", ordinal = 1, shift = At.Shift.BEFORE))
+    private void injected(boolean confirmedAction, CallbackInfo ci, @Local ServerInfo serverInfo) {
+        serverInfo.copyFrom(this.selectedEntry);
+        this.serverList.saveFile();
     }
 }

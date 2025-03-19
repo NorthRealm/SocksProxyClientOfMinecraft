@@ -27,7 +27,9 @@
     "network.MixinMultiplayerServerListPinger0_1",
     "network.MixinServerInfo",
     "screen.AccessorScreen",
+    "screen.MixinAddServerScreen",
     "screen.MixinConnectScreen_1",
+    "screen.MixinDirectConnectScreen",
     "screen.MixinMultiplayerScreen",
     "screen.MixinServerEntry"
   ],
