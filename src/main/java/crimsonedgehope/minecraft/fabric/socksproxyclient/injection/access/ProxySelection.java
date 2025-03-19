@@ -10,7 +10,6 @@ import net.minecraft.client.network.ServerInfo;
 import net.minecraft.network.ClientConnection;
 import org.jetbrains.annotations.NotNull;
 
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.Objects;
@@ -20,20 +19,34 @@ import java.util.Objects;
 public final class ProxySelection {
 
     public static void fire(@NotNull ClientConnection clientConnection, @NotNull ChannelPipeline pipeline) {
-        IMixinClientConnection imixin = (IMixinClientConnection) clientConnection;
+        ServerInfo serverInfo = ((IMixinClientConnection) clientConnection).socksProxyClient$getServerInfo();
+        InetSocketAddress remote = ((IMixinClientConnection) clientConnection).socksProxyClient$getInetSocketAddress();
 
-        ServerInfo serverInfo = imixin.socksProxyClient$getServerInfo();
-        InetSocketAddress remote = imixin.socksProxyClient$getInetSocketAddress();
-
-        // TODO: Remove
-        if (Objects.nonNull(serverInfo) && serverInfo.getServerType().equals(ServerInfo.ServerType.OTHER)) {
-            if (serverInfo.address.equals("mc.hypixel.net")) {
-                SocksSelection.fire(remote, pipeline, List::of);
-                return;
-            }
+        if (Objects.nonNull(serverInfo)) {
+            fire(serverInfo, remote, pipeline);
+            return;
         }
 
-        InetAddress address = remote.getAddress();
-        SocksSelection.fire(remote, pipeline, SocksSelection.supplierForMinecraft.apply(address));
+        if (((IMixinClientConnection) clientConnection).socksProxyClient$isPingingUseProxy()) {
+            fireApply(remote, pipeline);
+        } else {
+            fireNoApply(remote, pipeline);
+        }
+    }
+
+    public static void fire(@NotNull ServerInfo serverInfo, @NotNull InetSocketAddress remote, @NotNull ChannelPipeline pipeline) {
+        if (serverInfo.getServerType().equals(ServerInfo.ServerType.OTHER) && !((IMixinServerInfo) serverInfo).socksProxyClient$isUseProxy()) {
+            fireNoApply(remote, pipeline);
+        } else {
+            fireApply(remote, pipeline);
+        }
+    }
+
+    private static void fireNoApply(@NotNull InetSocketAddress remote, @NotNull ChannelPipeline pipeline) {
+        SocksSelection.fire(remote, pipeline, List::of);
+    }
+
+    private static void fireApply(@NotNull InetSocketAddress remote, @NotNull ChannelPipeline pipeline) {
+        SocksSelection.fire(remote, pipeline, SocksSelection.supplierForMinecraft.apply(remote.getAddress()));
     }
 }

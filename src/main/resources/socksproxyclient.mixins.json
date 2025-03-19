@@ -10,6 +10,7 @@
     "client.MixinMain",
     "client.MixinMinecraftClientInstance",
     "client.MixinMojangBlockListSupplier",
+    "client.MixinMultiValueDebugSampleLogImpl",
     "client.MixinPlayerSkinTexture",
     "client.MixinRealmsClientConfig",
     "client.MixinServerResourcePackLoader",
@@ -22,7 +23,9 @@
     "network.MixinAllowedAddressResolver",
     "network.MixinClientConnection",
     "network.MixinClientConnection_1",
-    "network.MixinMultiplayerServerListPinger",
+    "network.MixinMultiplayerServerListPinger0",
+    "network.MixinMultiplayerServerListPinger0_1",
+    "network.MixinServerInfo",
     "screen.AccessorScreen",
     "screen.MixinConnectScreen_1",
     "screen.MixinMultiplayerScreen"
