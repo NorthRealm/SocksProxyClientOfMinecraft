@@ -22,7 +22,7 @@ import java.util.function.Supplier;
 @Environment(EnvType.CLIENT)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class SocksSelection {
-    private static final Logger LOGGER = SocksProxyClient.getLogger("Connect");
+    public static final Logger LOGGER = SocksProxyClient.getLogger("Connect");
 
     public static final Function<InetAddress, Supplier<List<ProxyEntry>>> supplierForMinecraft = (address) -> ServerConfig::getProxyEntryForMinecraft;
 

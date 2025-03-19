@@ -1,6 +1,5 @@
 package crimsonedgehope.minecraft.fabric.socksproxyclient.proxy.http;
 
-import crimsonedgehope.minecraft.fabric.socksproxyclient.SocksProxyClient;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import net.fabricmc.api.EnvType;
@@ -17,7 +16,7 @@ public final class HttpProxyUtils {
     }
 
     public static Proxy getProxyObject(boolean useProxy) {
-        SocksProxyClient.getLogger("HttpProxy").debug("getProxyObject: {}", useProxy);
+        HttpProxy.LOGGER.debug("getProxyObject: {}", useProxy);
         if (!useProxy || !HttpProxy.INSTANCE.isFired()) {
             return Proxy.NO_PROXY;
         } else {

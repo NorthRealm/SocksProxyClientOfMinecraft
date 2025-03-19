@@ -85,11 +85,7 @@ public final class ServerConfig extends SocksProxyClientConfig {
     }
 
     public static List<ProxyEntry> getProxyEntryForMinecraft() {
-        return getProxyEntryForMinecraft(usingProxyOnMinecraft());
-    }
-
-    public static List<ProxyEntry> getProxyEntryForMinecraft(boolean useProxy) {
-        return GeneralConfig.getProxyEntry(useProxy);
+        return GeneralConfig.getProxyEntry(usingProxyOnMinecraft());
     }
 
     public static boolean shouldProxyYggdrasil() {

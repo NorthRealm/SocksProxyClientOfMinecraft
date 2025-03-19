@@ -12,6 +12,7 @@ import crimsonedgehope.minecraft.fabric.socksproxyclient.config.yacl.controller.
 import crimsonedgehope.minecraft.fabric.socksproxyclient.config.yacl.controller.ValidStringControllerBuilder;
 import crimsonedgehope.minecraft.fabric.socksproxyclient.config.yacl.screen.ProxyEntryEditScreen;
 import crimsonedgehope.minecraft.fabric.socksproxyclient.i18n.TranslateKeys;
+import crimsonedgehope.minecraft.fabric.socksproxyclient.injection.access.IMixinServerInfo;
 import crimsonedgehope.minecraft.fabric.socksproxyclient.proxy.http.HttpProxyUtils;
 import dev.isxander.yacl3.api.ButtonOption;
 import dev.isxander.yacl3.api.ConfigCategory;
@@ -175,6 +176,7 @@ final class GeneralCategory extends YACLCategory<GeneralConfig> {
         try {
             showTestStart(target);
             ServerInfo entry = new ServerInfo(target, target, ServerInfo.ServerType.OTHER);
+            ((IMixinServerInfo) entry).socksProxyClient$setUseProxy(true);
             pinger.add(entry, () -> {}, () -> {
                 showTestResult(new Pair<>(true, null), target);
                 SocksProxyClientConfig.LOGGER.info("Pinged {}: Ping {}ms\n Version: {}\n Protocol version: {}\n Player count: {}",

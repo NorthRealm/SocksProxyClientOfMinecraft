@@ -10,11 +10,19 @@ import org.spongepowered.asm.mixin.Overwrite;
 
 import java.net.InetSocketAddress;
 
+/**
+ * This mixin is referred in {@link crimsonedgehope.minecraft.fabric.socksproxyclient.injection.mixin.SocksProxyClientMixinPlugin}.
+ * Don't forget to check it there if renaming.
+ */
 @Mixin(MultiplayerServerListPinger.class)
 @Environment(EnvType.CLIENT)
-public class MixinMultiplayerServerListPinger {
+public class MixinMultiplayerServerListPinger0 {
+    /**
+     * @author SocksProxyClient
+     * @reason Legacy ping part can't work properly without hacking Minecraft itself.
+     */
     @Overwrite
     public void ping(InetSocketAddress socketAddress, final ServerAddress address, final ServerInfo serverInfo) {
-
+        // NO-OP.
     }
 }

@@ -22,6 +22,6 @@ public class SocksProxyClient implements ClientModInitializer {
 	}
 
 	public static Logger getLogger(final String path) {
-		return LoggerFactory.getLogger("SocksProxyClient/" + path);
+		return LoggerFactory.getLogger(SocksProxyClient.class.getSimpleName() + "/" + path);
 	}
 }
