@@ -28,7 +28,7 @@ public class MixinServerInfo implements IMixinServerInfo {
     private static final String SPC_KEY_USEPROXY = "socksproxyclient_useproxy";
 
     @Unique
-    private Boolean useProxy = null;
+    private boolean useProxy = true;  // true by default
 
     @Override
     public boolean socksProxyClient$isUseProxy() {
@@ -42,17 +42,6 @@ public class MixinServerInfo implements IMixinServerInfo {
 
     @Inject(method = "toNbt", at = @At("TAIL"))
     private void saveUseProxyKey(CallbackInfoReturnable<NbtCompound> cir, @Local NbtCompound nbtCompound) {
-        if (useProxy == null) {
-            useProxy = true;
-            try {
-                InetAddress ip = InetAddresses.forString(address);
-                if (ip.isLoopbackAddress()) {
-                    useProxy = false;
-                }
-            } catch (Throwable e) {
-                useProxy = true;
-            }
-        }
         SocksProxyClientMixinPlugin.LOGGER.debug("ServerInfo toNbt: {}, {}: {}", address, SPC_KEY_USEPROXY, useProxy);
         nbtCompound.putBoolean(SPC_KEY_USEPROXY, useProxy);
     }

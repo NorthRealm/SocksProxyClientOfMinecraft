@@ -65,7 +65,7 @@ public class MixinClientConnection implements IMixinClientConnection {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/network/ClientConnection;resetPacketSizeLog(Lnet/minecraft/util/profiler/MultiValueDebugSampleLogImpl;)V", shift = At.Shift.AFTER)
     )
     private static void injected(InetSocketAddress address, boolean useEpoll, MultiValueDebugSampleLogImpl packetSizeLog, CallbackInfoReturnable<ClientConnection> cir, @Local ClientConnection connection) {
-        ((IMixinClientConnection) connection).socksProxyClient$setPingingUseProxy(((IMixinMultiValueDebugSampleLogImpl) packetSizeLog).socksProxyClient$isUseProxy());
+        ((IMixinClientConnection) connection).socksProxyClient$setPingingUseProxy(((IMixinMultiValueDebugSampleLogImpl) packetSizeLog).socksProxyClient$isPingingUseProxy());
         SocksSelection.LOGGER.debug("Pinging to remote Minecraft server {}", address);
     }
 

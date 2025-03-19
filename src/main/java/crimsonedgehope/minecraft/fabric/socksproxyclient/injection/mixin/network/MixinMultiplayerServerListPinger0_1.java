@@ -25,7 +25,7 @@ public class MixinMultiplayerServerListPinger0_1 {
             packetSizeLog = new MultiValueDebugSampleLogImpl(1);
         }
 
-        ((IMixinMultiValueDebugSampleLogImpl) packetSizeLog).socksProxyClient$setUseProxy(((IMixinServerInfo) serverInfo).socksProxyClient$isUseProxy());
+        ((IMixinMultiValueDebugSampleLogImpl) packetSizeLog).socksProxyClient$setPingingUseProxy(((IMixinServerInfo) serverInfo).socksProxyClient$isUseProxy());
         return original.call(address, useEpoll, packetSizeLog);
     }
 }
