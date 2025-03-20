@@ -20,6 +20,7 @@
     "netty.MixinProxyHandler",
     "netty.MixinSocks4ProxyHandler",
     "netty.MixinSocks5ProxyHandler",
+    "network.AccessorServerList",
     "network.MixinAllowedAddressResolver",
     "network.MixinClientConnection",
     "network.MixinClientConnection_1",
