@@ -13,6 +13,7 @@ import crimsonedgehope.minecraft.fabric.socksproxyclient.config.yacl.controller.
 import crimsonedgehope.minecraft.fabric.socksproxyclient.config.yacl.screen.ProxyEntryEditScreen;
 import crimsonedgehope.minecraft.fabric.socksproxyclient.i18n.TranslateKeys;
 import crimsonedgehope.minecraft.fabric.socksproxyclient.injection.access.IMixinServerInfo;
+import crimsonedgehope.minecraft.fabric.socksproxyclient.injection.mixin.network.AccessorServerList;
 import crimsonedgehope.minecraft.fabric.socksproxyclient.proxy.http.HttpProxyUtils;
 import dev.isxander.yacl3.api.ButtonOption;
 import dev.isxander.yacl3.api.ConfigCategory;
@@ -26,6 +27,7 @@ import dev.isxander.yacl3.api.controller.StringControllerBuilder;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.MultiplayerServerListPinger;
 import net.minecraft.client.network.ServerInfo;
+import net.minecraft.client.option.ServerList;
 import net.minecraft.client.toast.SystemToast;
 import net.minecraft.text.Text;
 import net.minecraft.util.Pair;
@@ -65,12 +67,26 @@ final class GeneralCategory extends YACLCategory<GeneralConfig> {
                 .tooltip(Text.translatable(TranslateKeys.SOCKSPROXYCLIENT_CONFIG_GENERAL_TOOLTIP));
 
         useProxy = entryField("useProxy", Boolean.class);
-        Option<Boolean> yaclUseProxy = Option.<Boolean>createBuilder()
+        Option.Builder<Boolean> yaclUseProxyBuilder = Option.<Boolean>createBuilder()
                 .name(useProxy.getEntryTranslateKey())
                 .binding(useProxy.getDefaultValue(), useProxy::getValue, useProxy::setValue)
                 .controller(opt -> BooleanControllerBuilder.create(opt).yesNoFormatter().coloured(true))
-                .flag(OptionFlag.GAME_RESTART)
-                .build();
+                .flag(OptionFlag.GAME_RESTART);
+
+        int optouts = 0;
+        ServerList serverList = new ServerList(this.yaclAccess.getClient());
+        serverList.loadFile();
+        for (ServerInfo info : ((AccessorServerList) serverList).getServers()) {
+            if (!((IMixinServerInfo) info).socksProxyClient$isUseProxy()) {
+                optouts++;
+            }
+        }
+        if (optouts > 0) {
+            yaclUseProxyBuilder.description(OptionDescription.of(Text.translatable(TranslateKeys.SOCKSPROXYCLIENT_CONFIG_GENERAL_USEPROXY_OPTOUTS, optouts)));
+        }
+
+        Option<Boolean> yaclUseProxy = yaclUseProxyBuilder.build();
+
         categoryBuilder.option(yaclUseProxy);
 
         proxies = entryField("proxies", List.class);

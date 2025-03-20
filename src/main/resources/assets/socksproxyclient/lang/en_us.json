@@ -10,6 +10,7 @@
   "socksproxyclient.config.general": "General settings",
   "socksproxyclient.config.general.tooltip": "Configuration of SOCKS proxy to use",
   "socksproxyclient.config.general.useProxy": "Use proxy",
+  "socksproxyclient.config.general.useProxy.optouts": "Note: The proxy chain won't be applied to %s multiplayer server(s)",
   "socksproxyclient.config.general.proxy": "Socks Proxy",
   "socksproxyclient.config.general.proxies": "Socks proxy chain",
   "socksproxyclient.config.general.proxies.tooltip": "A chain of proxies to use.\nAssume you have 3 proxies PA, PB, PC, chain of Client-->PA-->PB-->PC-->Target server, PA being 1st hop, PB 2nd, PC 3rd, put PA on top of this list, PB follows, lastly PC.",
