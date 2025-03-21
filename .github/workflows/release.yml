@@ -11,10 +11,11 @@ permissions:
 jobs:
   publish-release:
     name: Publish release
-    uses: NorthRealm/SocksProxyClientOfMinecraft/.github/workflows/release.yml@master
-    with:
-      tag-ref: ${{ github.ref }}
-      java-version: "21"
-      java-distribution: "oracle"
-    secrets:
-      MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: NorthRealm/reusable-actions/SocksProxyClientOfMinecraft/release@main
+        with:
+          tag-ref: ${{ github.ref }}
+          java-version: "21"
+          java-distribution: "oracle"
+          token: ${{ secrets.MODRINTH_TOKEN }}

@@ -22,8 +22,10 @@ permissions:
 jobs:
   buildJar:
     name: Build jar 1.21.4
-    uses: NorthRealm/SocksProxyClientOfMinecraft/.github/workflows/jar.yml@master
-    with:
-      build-ref: "1.21.4"
-      java-version: "21"
-      java-distribution: "oracle"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: NorthRealm/reusable-actions/SocksProxyClientOfMinecraft/jar@main
+        with:
+          build-ref: "1.21.4"
+          java-version: "21"
+          java-distribution: "oracle"
