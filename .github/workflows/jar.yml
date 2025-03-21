@@ -22,7 +22,7 @@ permissions:
 jobs:
   buildJar121:
     name: Build jar ${{ matrix.minecraft_version }}
-    uses: NorthRealm/SocksProxyClientOfMinecraft/.github/workflows/jar.yml@master
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
@@ -44,17 +44,21 @@ jobs:
             fabric_version: "0.106.1+1.21.2"
             yacl_fabric: "1.21.2-fabric"
             modmenu_version: "12.0.0"
-    with:
-      build-ref: "1.21.3"
-      java-version: "21"
-      java-distribution: "oracle"
-      gradle-build-properties: -Pminecraft_version=${{ matrix.minecraft_version }} -Pyarn_mappings=${{ matrix.yarn_mappings }} -Pfabric_version=${{ matrix.fabric_version }} -Pyacl_fabric=${{ matrix.yacl_fabric }} -Pmodmenu_version=${{ matrix.modmenu_version }}
-      gradle-test-properties: -Pminecraft_version=${{ matrix.minecraft_version }} -Pyarn_mappings=${{ matrix.yarn_mappings }} -Pfabric_version=${{ matrix.fabric_version }} -Pyacl_fabric=${{ matrix.yacl_fabric }} -Pmodmenu_version=${{ matrix.modmenu_version }}
+    steps:
+      - uses: NorthRealm/reusable-actions/SocksProxyClientOfMinecraft/jar@main
+        with:
+          build-ref: "1.21.3"
+          java-version: "21"
+          java-distribution: "oracle"
+          gradle-build-properties: -Pminecraft_version=${{ matrix.minecraft_version }} -Pyarn_mappings=${{ matrix.yarn_mappings }} -Pfabric_version=${{ matrix.fabric_version }} -Pyacl_fabric=${{ matrix.yacl_fabric }} -Pmodmenu_version=${{ matrix.modmenu_version }}
+          gradle-test-properties: -Pminecraft_version=${{ matrix.minecraft_version }} -Pyarn_mappings=${{ matrix.yarn_mappings }} -Pfabric_version=${{ matrix.fabric_version }} -Pyacl_fabric=${{ matrix.yacl_fabric }} -Pmodmenu_version=${{ matrix.modmenu_version }}
 
   buildJar1213:
     name: Build jar 1.21.3
-    uses: NorthRealm/SocksProxyClientOfMinecraft/.github/workflows/jar.yml@master
-    with:
-      build-ref: "1.21.3"
-      java-version: "21"
-      java-distribution: "oracle"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: NorthRealm/reusable-actions/SocksProxyClientOfMinecraft/jar@main
+        with:
+          build-ref: "1.21.3"
+          java-version: "21"
+          java-distribution: "oracle"
