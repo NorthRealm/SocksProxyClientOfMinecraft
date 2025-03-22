@@ -14,6 +14,27 @@
 
 ### Security
 
+## [10.3.0-alpha+1.21.3]
+
+### Added
+
+- Add General category config "httpTestSubjects" for proxy chain testing.
+- Add General category config "minecraftTestSubjects" for proxy chain testing.
+- Selectively determine whether connection to a specific server should be applied with proxy or not. New button on AddServer screen and DirectConnect screen. New hover text over ping bar icon.
+- In General category config screen, "useProxy" option will show how many multiplayer servers will not be applied proxy chain to.
+- New translate keys.
+
+### Changed
+
+- Mod metadata
+- Translation content
+- Internal refactor
+
+### Removed
+
+- Server category config "imposeProxyOnMinecraftLoopback" is no longer available.
+- Legacy ping won't work anymore.
+
 ## [10.2.0-alpha+1.21.3]
 
 ### Added
@@ -136,7 +157,8 @@
 - Convert SOCKS proxy to HTTP(S) proxy. Proxy communications with Mojang Yggdrasil auth service, player skin download endpoint, and server resource pack downloading.
 - Remotely resolve Minecraft server's domain name through SOCKS proxy with the help of [DNS over HTTPS (DoH)](https://www.rfc-editor.org/rfc/rfc8484)
 
-[Unreleased]: https://github.com/NorthRealm/SocksProxyClientOfMinecraft/compare/v10.2.0-alpha+1.21.3...HEAD
+[Unreleased]: https://github.com/NorthRealm/SocksProxyClientOfMinecraft/compare/v10.3.0-alpha+1.21.3...HEAD
+[10.3.0-alpha+1.21.3]: https://github.com/NorthRealm/SocksProxyClientOfMinecraft/compare/v10.2.0-alpha+1.21.3...v10.3.0-alpha+1.21.3
 [10.2.0-alpha+1.21.3]: https://github.com/NorthRealm/SocksProxyClientOfMinecraft/compare/v10.1.1-alpha+1.21.3...v10.2.0-alpha+1.21.3
 [10.1.1-alpha+1.21.3]: https://github.com/NorthRealm/SocksProxyClientOfMinecraft/compare/v10.1.0-alpha+1.21.1...v10.1.1-alpha+1.21.3
 [10.1.0-alpha+1.21.1]: https://github.com/NorthRealm/SocksProxyClientOfMinecraft/compare/v10.0.0-alpha+1.21.1...v10.1.0-alpha+1.21.1
